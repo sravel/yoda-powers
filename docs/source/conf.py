@@ -34,9 +34,7 @@ extensions = ['sphinx.ext.intersphinx',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
               'sphinx.ext.autosectionlabel',
-              'autodocsumm',
               'sphinxarg.ext',
-              'sphinxcontrib.autoprogram',
               ]
 
 autodoc_default_options = {
