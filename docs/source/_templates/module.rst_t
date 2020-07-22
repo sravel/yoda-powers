@@ -1,0 +1,4 @@
+
+.. autoprogram:: ../library/{{ qualname }}.py:parser()
+    :prog: {{ qualname }}.py
+    :groups:
