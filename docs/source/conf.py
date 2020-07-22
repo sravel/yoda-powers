@@ -34,13 +34,15 @@ extensions = ['sphinx.ext.intersphinx',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
               'sphinx.ext.autosectionlabel',
+              'autodocsumm',
               ]
 
 autodoc_default_options = {
     'autosummary': True,
 }
 autosectionlabel_prefix_document = True
-autosectionlabel_maxdepth = 3
+autosectionlabel_maxdepth = 1
+autosummary_generate = True
 
 # TODO enable once new theme is final
 # html_style = "theme.css"
@@ -323,11 +325,7 @@ texinfo_documents = [
 def setup(app):
     app.add_css_file('logo.css')  # may also be an URL('logo.css')  # may also be an URL
     # app.add_css_file('sphinx-argparse.css')
-    # app.add_config_value('recommonmark_config', {
-            # 'url_resolver': lambda url: github_doc_root + url,
-            # 'auto_toc_tree_section': 'Contents',
-            # }, True)
-    # app.add_transform(AutoStructify)
+
     from sphinx.ext import apidoc
     # app.connect('builder-inited', lambda _: apidoc.main([
     #     '-o', './source/scripts', '-t', './source/_templates', '-d1', '-feMT', '../scripts/',
