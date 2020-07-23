@@ -24,11 +24,18 @@ Use it to import very handy functions.
 .. toctree::
    :caption: API started
    :name: API_started
-   :glob:
-   :maxdepth: 0
+   :maxdepth: 5
 
-   ./yoda_powers/*
+   ./yoda_powers/yoda_powers
 
+Class overview
+--------------
+
+.. autosummary::
+   :toctree: ./yoda_powers/yoda_powers
+   :template: _template/module.rst_t
+
+    ./yoda_powers/yoda_powers
 
 Indices and tables
 ==================
