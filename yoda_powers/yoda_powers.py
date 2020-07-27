@@ -160,7 +160,7 @@ def concat_fasta_files(path_directory):
          ValueError: If `path_directory` does not exist.
          ValueError: If `path_directory` is not a valid directory.
 
-    Example:
+    Examples:
         >>> dico_concat = concat_fasta_files('path/to/directory/')
         >>> print(dico_concat)
             {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
@@ -181,20 +181,21 @@ def concat_fasta_files(path_directory):
     output_dico_seqs = {}
 
     for fasta_file in (*fa_files, *fasta_files, *fas_files):
-            # print(fasta_file)
+        # print(fasta_file)
         with open(fasta_file.as_posix(), "rU") as handle:
             record_dict = SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
         for seq_name in sorted(record_dict.keys()):
-             if seq_name not in output_dico_seqs.keys():
+            if seq_name not in output_dico_seqs.keys():
                 name = record_dict[seq_name].id
                 seq = record_dict[seq_name].seq
                 output_dico_seqs[name] = seq
-             else:
+            else:
                 name = record_dict[seq_name].id
                 seq = record_dict[seq_name].seq
                 output_dico_seqs[name] += seq
 
     return output_dico_seqs
+
 
 def convert_fasta_2_nexus(path_directory, path_directory_out):
     """
@@ -221,7 +222,7 @@ def convert_fasta_2_nexus(path_directory, path_directory_out):
          ValueError: If `path_directory` is not a valid directory.
          ValueError: If fasta is not align.
 
-    Example:
+    Examples:
         >>> nb_file = convert_fasta_2_nexus('path/to/directory/',' path/to/directory/')
         >>> print(nb_file)
             "4172"
@@ -265,33 +266,6 @@ def convert_fasta_2_nexus(path_directory, path_directory_out):
     return count_convert
 
 
-def dict_2_txt(dico, sep="\t"):
-    """
-    Function that takes a dictionary and returns a string with separator::
-
-    Arguments:
-        dico (:obj:`dict`): the python dict to translate to formated string.
-        sep (:obj:`str`): the separator for join . Defaults to '\\t'.
-
-    Returns:
-        str: formated dict to string
-
-    Example:
-        >>> dico = {"key1":"value1","key2":"value2","key3":"value3"}
-        >>> dict_2_txt(dico)
-        key1	value1
-        key2	value2
-        key3	value3
-        >>> dict_2_txt(dico, sep=";")
-        key1;value1
-        key2;value2
-        key3;value3
-
-    Warning: if the value of the dict is list or dictionary, the display will be plain and without formatting data.
-    """
-
-    return "".join([f"{key}{sep}{dico[key]}\n" for key in sorted(dico.keys(), key=sort_human)])
-
 def dict_2_fasta(dico, fasta_out):
     """
     Function that takes a dictionary where key are ID and value Seq, and write a fasta file.
@@ -309,7 +283,7 @@ def dict_2_fasta(dico, fasta_out):
     Returns:
         :class:`str`: the output fasta file name
 
-    Example:
+    Examples:
         >>> dico = {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
         >>> dict_2_fasta(dico)
         >Seq1
@@ -330,6 +304,280 @@ def dict_2_fasta(dico, fasta_out):
             record = SeqRecord(seq_obj, id=seq_name, name=seq_name, description="")
             SeqIO.write(record, output_handle, "fasta")
     return output_handle.name
+
+
+def dict_2_txt(dico, sep="\t"):
+    """
+    Function that takes a dictionary and returns a string with separator:
+
+    Arguments:
+        dico (:class:`dict`): the python dict to translate to formated string.
+        sep (:class:`str`): the separator for join . Defaults to '\\t'.
+
+    Returns:
+        str: formated dict to string
+
+    Examples:
+        >>> dico = {"key1":"value1","key2":"value2","key3":"value3"}
+        >>> dict_2_txt(dico)
+        key1	value1
+        key2	value2
+        key3	value3
+        >>> dict_2_txt(dico, sep=";")
+        key1;value1
+        key2;value2
+        key3;value3
+
+    Warning: if the value of the dict is list or dictionary, the display will be plain and without formatting data.
+    """
+
+    return "".join([f"{key}{sep}{dico[key]}\n" for key in sorted(dico.keys(), key=sort_human)])
+
+
+def dict_dict_2_txt(dico, first="Info", sep="\t"):
+    """
+    Function that takes a dictionary and returns a tabular string with:
+
+    Arguments:
+        dico (:obj:`dict`): the python dict to translate to formated string.
+        first (:obj:`str`): the first column header name. Default to 'Info'.
+        sep (:obj:`str`): the separator for join. Defaults to '\\t'.
+
+    Returns:
+        str: formated dict to string
+
+    Examples:
+        >>> dico = {"Souche1":{"NUM":"171","MIN":"2042","MAX":"3133578","N50 BP":"938544","N50 NUM":"11"},
+                    "Souche2":{"NUM":"182","MIN":"5004","MAX":"74254","N50 BP":"45245"}}
+        >>> dict_dict_2_txt(dico,"souches")
+        souches	NUM	MIN	MAX	N50 BP	N50 NUM
+        Souche1	171	2042	3133578	938544	11
+        Souche2	182	5004	74254	45245	None
+
+    """
+
+    txt_output = f'{first}{sep}{sep.join(list(dico.values())[0].keys())}\n'
+    for row_name in sorted(dico.keys(), key=sort_human):
+        value = sep.join([str(dico[row_name][key2]) if key2 in dico[row_name].keys() else "None" for key2 in
+                          list(dico.values())[0].keys()])
+        txt_output += f"{row_name}{sep}{value}\n"
+    return txt_output
+
+
+def dict_list_2_txt(dico, sep="\t"):
+    """
+    Function that takes a dictionary of list and returns a tabular string with:
+
+    Arguments:
+        dico (:obj:`dict`): the python dict to translate to formated string.
+        sep (:obj:`str`): the separator for join . Defaults to '\\t'.
+
+    Returns:
+        str: formated dict to string
+
+    Examples:
+        >>> dico = {"key1":["value1","value1"], "key2":["value2","value2"],"key3":["value3","value3"]}
+        >>> dict_list_2_txt(dico)
+        key1	value1	value1
+        key2	value2	value2
+        key3	value3	value3
+
+    """
+
+    txt_output = ""
+    for key in sorted(dico.keys(), key=sort_human):
+        txt_output += f"{key}{sep}{sep.join(sorted(dico[key], key=sort_human))}\n"
+    return txt_output
+
+
+def existant_file(path):
+    """
+    'Type' for argparse - checks that file exists and return the absolute path as PosixPath() with pathlib
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - argparse
+
+
+    Arguments:
+        path (str): a path to eixstant file
+
+    Returns:
+        :class:`PosixPath`: ``Path(path).resolve()``
+
+    Raises:
+         ArgumentTypeError: If file `path` does not exist.
+         ArgumentTypeError: If `path` is not a valid file.
+
+    Examples:
+        >>> import argparse
+        >>> parser = argparse.ArgumentParser(prog='test.py', description='''This is demo''')
+        >>> parser.add_argument('-f', '--file', metavar="<path/to/file>",type=existant_file, required=True,
+            dest='path_file', help='path to file')
+
+    """
+    from argparse import ArgumentTypeError
+    from pathlib import Path
+
+    if not Path(path).exists():
+        # Argparse uses the ArgumentTypeError to give a rejection message like:
+        # error: argument input: x does not exist
+        raise ArgumentTypeError(f'ERROR: file "{path}" does not exist')
+    elif not Path(path).is_file():
+        raise ArgumentTypeError(f'ERROR: "{path} " is not a valid file')
+
+    return Path(path).resolve()
+
+
+def extract_seq_from_fasta(fasta_file, wanted_file, include=True):
+    """
+    Function to extract sequence from fasta file
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - BioPython
+
+    Arguments:
+        fasta_file (str): a path to fasta file directory
+        wanted_file (str): a path file with id (one per line)
+        include (bool, optional): if True keep id on wanted file, else keep id not in wanted file
+
+    Returns:
+        :class:`dict`: the fasta dict with sequence extract
+
+    Raises:
+         ValueError: If `wanted_file` or `fasta_file` does not exist.
+         ValueError: If `wanted_file` or `fasta_file`` is not a valid file.
+         ValueError: If `include` is not valid boolean.
+
+    Example:
+        >>> dict_sequences = extract_seq_from_fasta(fasta_file, wanted_file)
+        >>> dict_sequences
+        {'Seq2': SeqRecord(seq=Seq('ATGCCGATCGATG', SingleLetterAlphabet()), id='Seq2', name='Seq2', description='Seq2', dbxrefs=[]), 'Seq3': SeqRecord(seq=Seq('ATGCTCAGTCAGTAG', SingleLetterAlphabet()), id='Seq3', name='Seq3', description='Seq3', dbxrefs=[])}
+    """
+    from Bio import SeqIO
+    from pathlib import Path
+
+    wanted_file = Path(wanted_file).resolve()
+    fasta_file = Path(fasta_file).resolve()
+
+    if not isinstance(bool(include), bool):
+        raise ValueError(f'ERROR: "{include}" must be a boolean value')
+    include = bool(include)
+
+    if not wanted_file.exists():
+        raise ValueError(f'ERROR: file "{wanted_file}" does not exist')
+    elif not wanted_file.is_file():
+        raise ValueError(f'ERROR: "{wanted_file} " is not a valid file')
+
+    if not fasta_file.exists():
+        raise ValueError(f'ERROR: file "{fasta_file}" does not exist')
+    elif not fasta_file.is_file():
+        raise ValueError(f'ERROR: "{fasta_file} " is not a valid file')
+
+    with open(wanted_file) as f:
+        wanted = set([line.strip() for line in f if line != ""])
+
+    with open(fasta_file, "r") as handle:
+        fasta_sequences = SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
+        fasta_sequences_del = fasta_sequences.copy()
+    for seq in fasta_sequences:
+        if include and seq not in wanted:
+            del fasta_sequences_del[seq]
+        elif not include and seq in wanted:
+            del fasta_sequences_del[seq]
+    return fasta_sequences_del
+
+
+def fasta_2_dict(fasta_file):
+    """
+    Function that take a file name (fasta), and return a dictionnary of sequence
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - BioPython
+
+    Arguments:
+        fasta_file (str): a path to fasta file directory
+
+    Returns:
+        :class:`dict`: the fasta dict with sequence extract
+
+    Raises:
+         ValueError: If `fasta_file` does not exist.
+         ValueError: If `fasta_file` is not a valid file.
+
+    Example:
+        >>> filename = "sequence.fasta"
+        >>> fasta_2_dict(filename)
+        {'Seq1': SeqRecord(seq=Seq('ATGCTGCAGTAG', SingleLetterAlphabet()), id='Seq1', name='Seq1', description='Seq1', dbxrefs=[]),
+        'Seq2': SeqRecord(seq=Seq('ATGCCGATCGATG', SingleLetterAlphabet()), id='Seq2', name='Seq2', description='Seq2', dbxrefs=[]),
+        'Seq3': SeqRecord(seq=Seq('ATGCTCAGTCAGTAG', SingleLetterAlphabet()), id='Seq3', name='Seq3', description='Seq3', dbxrefs=[])}
+    """
+    from Bio import SeqIO
+    from pathlib import Path
+
+    fasta_file = Path(fasta_file).resolve()
+
+    if not fasta_file.exists():
+        raise ValueError(f'ERROR: file "{fasta_file}" does not exist')
+    elif not fasta_file.is_file():
+        raise ValueError(f'ERROR: "{fasta_file} " is not a valid file')
+
+    with open(fasta_file, "r") as handle:
+        return SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
+
+
+def len_seq_2_dict(fasta_file):
+    """
+    Function that take a file name (fasta), and return a dictionnary with length of sequence
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - BioPython
+
+    Arguments:
+        fasta_file (str): a path to fasta file directory
+
+    Returns:
+        :class:`dict`: the fasta dict with sequence length
+
+    Raises:
+         ValueError: If `fasta_file` does not exist.
+         ValueError: If `fasta_file`` is not a valid file.
+
+    Example:
+        >>> filename = "sequence.fasta"
+        >>> len_seq_2_dict(filename)
+        {'Seq1': 12, 'Seq2': 13, 'Seq3': 15}
+    """
+    from Bio import SeqIO
+    from pathlib import Path
+
+    fasta_file = Path(fasta_file).resolve()
+    dico_lenght = {}
+
+    if not fasta_file.exists():
+        raise ValueError(f'ERROR: file "{fasta_file}" does not exist')
+    elif not fasta_file.is_file():
+        raise ValueError(f'ERROR: "{fasta_file} " is not a valid file')
+
+    with open(fasta_file, "r") as handle:
+        record_dict = SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
+
+    for gene in sorted(record_dict.keys()):
+        if record_dict[gene].id not in dico_lenght:
+            lenseq = len(record_dict[gene].seq)
+            dico_lenght[gene] = int(lenseq)
+    return dico_lenght
 
 
 def max_key_dict(dico):
@@ -364,13 +612,12 @@ def sort_human(list, _nsre=re.compile('([0-9]+)')):
     :return: :class:`list` sorted with human sort number
     :rtype: :class:`list`
 
-    :Example:
-
-    >>> list_to_sorted = ["something1","something32","something17","something2","something29","something24"]
-    >>> print(list_to_sorted.sort(key=sort_human))
-    ['something1', 'something17', 'something2', 'something25', 'something29', 'something32']
-    >>> print(sorted(list_to_sorted, key=sort_human))
-    ['something1', 'something17', 'something2', 'something25', 'something29', 'something32']
+    Example:
+        >>> list_to_sorted = ["something1","something32","something17","something2","something29","something24"]
+        >>> print(list_to_sorted.sort(key=sort_human))
+        ['something1', 'something17', 'something2', 'something25', 'something29', 'something32']
+        >>> print(sorted(list_to_sorted, key=sort_human))
+        ['something1', 'something17', 'something2', 'something25', 'something29', 'something32']
 
     """
     try:
@@ -380,145 +627,6 @@ def sort_human(list, _nsre=re.compile('([0-9]+)')):
             warnings.warn(f"WARNNING Yoda_powers::sort_human : List {list} value not understand so don't sort \n",
                           SyntaxWarning, stacklevel=2)
         return list
-
-
-def existant_file(path):
-    """
-    'Type' for argparse - checks that file exists but does not open by default.
-    return the absolute path as PosixPath() with pathlib
-
-    :param path: a file path
-    :type path: :class:`str`
-    :return: Absolute path of file
-    :rtype: :class:`PosixPath`
-    :raise: :class:`argparse.ArgumentTypeError` if file path does not exist or not a file
-
-    """
-    from argparse import ArgumentTypeError
-    if not Path(path).exists():
-        # Argparse uses the ArgumentTypeError to give a rejection message like:
-        # error: argument input: x does not exist
-        raise ArgumentTypeError(f'ERROR: file "{path}" does not exist')
-    elif not Path(path).is_file():
-        raise ArgumentTypeError(f'ERROR: "{path} " is not a valid file')
-
-    return Path(path).resolve()
-
-
-
-
-def dict_list2txt(dico, sep="\t"):
-    """
-    Function that takes a dictionary of list and returns a tabular string with::
-
-        "key\\tvalue\\n".
-
-    :param dico: a python dictionary
-    :type dico: dict()
-    :param sep: separator character default tab
-    :type sep: str()
-    :rtype: str()
-    :return: string with "key\t\tvalue1\tvalue1\n
-
-    Example:
-        >>> dico = {"key1":["value1","value1"], "key2":["value2","value2"],"key3":["value3","value3"]}
-        >>> dict_list2txt(dico)
-        key1	value1	value1
-        key2	value2	value2
-        key3	value3	value3
-
-    """
-
-    txt_output = ""
-    for key in sorted(dico.keys(), key=sort_human):
-        txt_output += f"{key}{sep}{sep.join(sorted(dico[key], key=sort_human))}\n"
-    return txt_output
-
-
-def dict_dict2txt(dico, first="Info", sep="\t"):
-    """
-    Function that takes a dictionary and returns a tabular string with::
-
-        "key\\tvalue\\n".
-
-    :param dico: a python dictionary
-    :type dico: dict()
-    :param first: string for name first column
-    :type first: str()
-    :rtype: str()
-    :param: sep: separator character default tab
-    :type sep: str()
-    :return: string with "key\\tvalue\\n
-
-    Example:
-        >>> dico = {"Souche1":{"NUM":"171","MIN":"2042","MAX":"3133578","N50 BP":"938544","N50 NUM":"11"},
-                    "Souche2":{"NUM":"182","MIN":"5004","MAX":"74254","N50 BP":"45245"}}
-        >>> dict_dict2txt(dico,"souches")
-        souches	NUM	MIN	MAX	N50 BP	N50 NUM
-        Souche1	171	2042	3133578	938544	11
-        Souche2	182	5004	74254	45245	None
-
-    """
-
-    txt_output = f'{first}{sep}{sep.join(list(dico.values())[0].keys())}\n'
-    for row_name in sorted(dico.keys(), key=sort_human):
-        value = sep.join([str(dico[row_name][key2]) if key2 in dico[row_name].keys() else "None" for key2 in
-                          list(dico.values())[0].keys()])
-        txt_output += f"{row_name}{sep}{value}\n"
-    return txt_output
-
-
-
-
-
-def fasta2dict(filename):
-    """
-    Function that take a file name (fasta), and return a dictionnary of sequence
-
-    :param filename: a fasta file
-    :type filename: file in fasta format
-    :rtype: record_dict()
-    :return: dict() - dictionnary with keys are Id and value SeqRecord() fields
-    :requires: this function require BIO Python modules:
-    :requires: from Bio import SeqIO
-    :requires: from Bio.SeqRecord import SeqRecord
-    :requires: from Bio.Seq import Seq
-    :requires: from Bio.Alphabet import SingleLetterAlphabet
-
-    Example:
-        >>> filename = "sequence.fasta"
-        >>> fasta2dict(filename)
-        {">Seq1":"SeqRecord()"}
-    """
-
-    # chargement du fasta des MGG en mémoire
-    with open(filename, "rU") as handle:
-        return SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
-
-
-def lenSeq2dict(filename):
-    """
-    Function that take a file name (fasta), and return a dictionnary with length of sequence
-
-    :param filename: a fasta file
-    :type filename: file in fasta format
-    :rtype: record_dict()
-    :return: dict() - contain length of sequences
-    :requires: this function require fasta2dict(filename)
-
-    Example:
-        >>> filename = "sequence.fasta"
-        >>> lenSeq2dict(filename)
-        {">Seq1":20154}
-    """
-
-    dicoLenMGG = {}
-    record_dict = fasta2dict(filename)
-    for gene in sorted(record_dict.keys(), key=sort_human):
-        if record_dict[gene].id not in dicoLenMGG:
-            lenseq = len(record_dict[gene].seq)
-            dicoLenMGG[gene] = int(lenseq)
-    return dicoLenMGG
 
 
 def nbSeqInFile2dict(pathDirectory):
@@ -851,98 +959,6 @@ def loadInDictDict(filename):
     return dicoOut
 
 
-def extractListFromFasta(sequenceFile, FileList):
-    """
-    Function who use 2 files:\\n
-            - fasta : file with all Sequences
-            - list : file with name of sequence to extract from fasta
-
-    then return dict() with only Sequence in listed file.
-
-    :param sequenceFile: a file with all Sequences
-    :type sequenceFile: file
-    :param FileList: a file with name of sequence to extract from fasta
-    :type FileList: file
-    :rtype: dict() and int()
-    :return: - dict with only Sequence in listed file and nbtotal seq in file
-    :requires: this function require fasta2dict(filename) and loadInList(filename)
-
-    Example:
-        >>> dictSequences = extractListFromFasta(sequenceFile, FileList)
-        >>> dictSequences
-        {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
-    """
-
-    dicoOutput = {}
-    # Ouverture des sequences fasta MGG et chargement dans dictionnaire
-    dictSequences = fasta2dict(sequenceFile)
-    # ouverture des identifiants a garder
-    listKeep = loadInList(FileList)
-    keep = 0
-    noKeep = 0
-    noKeepID = []
-    # for ID, record in dictSequences.items():
-    for ID in sorted(dictSequences.keys(), key=sort_human):
-        record = dictSequences[ID]
-        if ID in listKeep:
-            keep += 1
-            dicoOutput[ID] = record
-        else:
-            noKeepID.append(ID)
-            noKeep += 1
-    # print("seq keep:"+str(keep))
-    # print("seq nokeep:"+str(noKeep))
-    # print("ID nokeep:"+str(noKeepID))
-    total = noKeep + keep
-    return dicoOutput, total
-
-
-def extractInverseListFromFasta(sequenceFile, FileList):
-    """
-    Function who use 2 files:\\n
-            - fasta : file with all Sequences
-            - list : file with name of sequence to extract from fasta
-
-    then return dict() with only Sequence not in listed file.
-
-    :param sequenceFile: a file with all Sequences
-    :type sequenceFile: file
-    :param FileList: a file with name of sequence to not extract from fasta
-    :type FileList: file
-    :rtype: dict() and int()
-    :return: - dict with only Sequence in listed file and nbtotal seq in file
-    :requires: this function require fasta2dict(filename) and loadInList(filename)
-
-    Example:
-        >>> dictSequences = extractListFromFasta(sequenceFile, FileList)
-        >>> dictSequences
-        {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
-    """
-
-    dicoOutput = {}
-    # Ouverture des sequences fasta MGG et chargement dans dictionnaire
-    dictSequences = fasta2dict(sequenceFile)
-    # ouverture des identifiants a garder
-    listnotKeep = loadInList(FileList)
-    keep = 0
-    noKeep = 0
-    noKeepID = []
-    # for ID, record in dictSequences.items():
-    for ID in sorted(dictSequences.keys(), key=sort_human):
-        record = dictSequences[ID]
-        if ID not in listnotKeep:
-            keep += 1
-            dicoOutput[ID] = record
-        else:
-            noKeepID.append(ID)
-            noKeep += 1
-    total = noKeep + keep
-    # print("seq keep:"+str(keep))
-    # print("seq nokeep:"+str(noKeep))
-    # print("ID nokeep:"+str(noKeepID))
-    return dicoOutput, total
-
-
 def lsDirToList(pathDirectory):
     """
     Return a list of file and directory find in directory
@@ -1040,6 +1056,7 @@ def lsExtInDirToList(pathDirectory, extentionFichierKeep):
 
     return sorted(lsFilesFasta)
 
+
 def printcolor(txt, color, noprint=1):
     """	Return the printed color txt format
 
@@ -1073,34 +1090,6 @@ def printcolor(txt, color, noprint=1):
             print(txtout)
     else:
         txtout = "Error, color value non exist, please check other color\n\n" + txt
-
-
-def relativeToAbsolutePath(relative):
-    """	Return the absolutPath
-
-    :param relative: a string path
-    :type relative: string
-    :rtype: string()
-    :return: absolutePath
-    :warn: need subprocess::check_output
-
-    Example:
-    >>>print(relative)
-    ../test
-    >>> pathDirectory = relativeToAbsolutePath(relative)
-    >>>print(pathDirectory)
-    /home/sebastien/test
-
-    """
-    from subprocess import check_output
-    if relative[0] != "/":  # The relative path is a relative path, ie do not starts with /
-        command = "readlink -m " + relative
-        absolutePath = subprocess.check_output(command, shell=True).decode("utf-8").rstrip()
-        return absolutePath
-    else:  # Relative is in fact an absolute path, send a warning
-        absolutePath = relative;
-        return absolutePath
-
 
 #################################################
 # CLASS
