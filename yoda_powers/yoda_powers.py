@@ -29,9 +29,6 @@ import urllib
 __version__ = "1.0.0"
 
 __doc__ = """
-The Yoda_powers module
-======================
-
 :author: Sebastien Ravel
 :contact: sebastien.ravel@cirad.fr
 :date: 22-07-2020
@@ -70,7 +67,12 @@ This module run with Python 3.x and not Python 2.x
     - pyvcf
     - pyfaidx
 
-more info at https://readthedocs.org/projects/yoda-powers"""
+more info at https://readthedocs.org/projects/yoda-powers
+
+Table of contents
+-----------------
+
+"""
 
 
 ##################################################

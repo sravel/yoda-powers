@@ -21,6 +21,7 @@ import os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('./'))
 sys.path.insert(0, os.path.abspath('./yoda_powers/'))
+sys.path.insert(0, os.path.abspath('../../yoda_powers/'))
 
 # -- General configuration ------------------------------------------------
 
@@ -35,6 +36,7 @@ extensions = ['sphinx.ext.intersphinx',
               'sphinx.ext.autodoc',
               'sphinx.ext.autosectionlabel',
               'autodocsumm',
+              'sphinx_automodapi.automodapi',
               ]
 
 autodoc_default_options = {
@@ -48,6 +50,8 @@ autodoc_default_options = {
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 1
 autosummary_generate = False
+autosummary_generate_overwrite = False
+
 
 # TODO enable once new theme is final
 # html_style = "theme.css"
@@ -335,7 +339,7 @@ def setup(app):
     # app.connect('builder-inited', lambda _: apidoc.main([
     #     '-o', './source/scripts', '-t', './source/_templates', '-d1', '-feMT', '../scripts/',
     # ]))
-    app.connect('builder-inited', lambda _: apidoc.main([
-        '-o', './docs/source/yoda_powers', '-d3', '-feTMP', './yoda_powers',
-    ]))
+    # app.connect('builder-inited', lambda _: apidoc.main([
+    #     '-o', './docs/source/yoda_powers', '-d3', '-feTMP', './yoda_powers',
+    # ]))
     # sphinx-apidoc -o ./source/scripts/ -t ./source/_templates/ -feM ../library/
