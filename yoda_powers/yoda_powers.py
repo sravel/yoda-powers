@@ -14,10 +14,6 @@ from pathlib import Path
 
 # BIO Python modules
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
-from Bio import AlignIO
-from Bio.Nexus import Nexus
-
 
 # ParseGFF modules
 from collections import namedtuple
@@ -36,6 +32,48 @@ __doc__ = """
 
 Use it to import very handy functions.
 
+
+Install
+-------
+::
+
+    # not working yet, module in development
+    pip3 install yoda_powers
+
+Install developing version
+--------------------------
+
+If you want to use an **unofficial version** of the ``yoda_powers`` module, you need to work from
+a clone of this ``git`` repository.
+following actions:
+
+1. Clone from github ::
+
+    $ git clone https://github.com/sravel/yoda-powers.git
+
+2. Go in the cloned directory ::
+
+    $ cd yoda-powers
+
+3. Install ``yoda-powers`` in editable mode ::
+
+    $ sudo pip3 install -e .
+
+Required Module install
+-----------------------
+
+This module run with Python 3.x and not Python 2.x
+
+** Modules install with :class:`yoda_powers`:**
+    - BioPython
+    - pyvcf
+    - pyfaidx
+
+more info at https://yoda-powers.readthedocs.io/en/latest/
+
+Exemple of usage
+----------------
+
 Example:
 
 >>> from yoda_powers import dict2txt
@@ -44,30 +82,6 @@ Example:
 key1	value1
 key2	value2
 key3	value3
-
-Required Module install
------------------------
-
-This module run with Python 3.x and not Python 2.x
-
-** Include import of default python:**
-    - argparse,
-    - os,
-    - subprocess,
-    - glob,
-    - re,
-    - warning,
-    - pathlib,
-    - collections,
-    - gzip,
-    - urllib,
-
-** Modules install with :class:`yoda_powers`:**
-    - BioPython
-    - pyvcf
-    - pyfaidx
-
-more info at https://yoda-powers.readthedocs.io/en/latest/
 
 Table of contents
 -----------------
@@ -78,25 +92,6 @@ Table of contents
 ##################################################
 # Functions
 
-def max_key_dict(dico):
-    """
-    Function return the key of max value in dico values()
-
-    Arguments:
-        dico (dict): a python :class:`dict`
-
-    Returns:
-        str: key of the dict
-
-    Example:
-        >>> dico = {"A":0.5, "C":0.7, "T":0.01, "G":0.9}
-        >>> key_max = max_key_dict(dico)
-        >>> print(key_max)
-        G
-    """
-    return max(dico, key=dico.get)
-
-
 def compare_list(list1, list2):
     """
     Function to compare two list and return common, uniq1 and uniq2
@@ -106,19 +101,22 @@ def compare_list(list1, list2):
         list2 (list): the second python :class:`list`
 
     Returns:
-        list: common, u1, u2 \ncommon: the common elements of the 2 list,\nu1: uniq to list1,\nu2: uniq to list2
+        list: common, u1, u2
+        common: the common elements of the 2 list,
+        u1: uniq to list1,
+        u2: uniq to list2
 
     Notes:
         ens1 = set([1, 2, 3, 4, 5, 6])\n
         ens2 = set([2, 3, 4])\n
         ens3 = set([6, 7, 8, 9])\n
-        `print(ens1 & ens2)` set([2, 3, 4]) car ce sont les seuls à être en même temps dans ens1 et ens2\n
-        `print(ens1 | ens3)` set([1, 2, 3, 4, 5, 6, 7, 8, 9]), les deux réunis\n
-        `print(ens1 & ens3)` set([6]), même raison que deux lignes au dessus\n
-        `print(ens1 ^ ens3)` set([1, 2, 3, 4, 5, 7, 8, 9]), l'union moins les éléments communs\n
-        `print(ens1 - ens2)` set([1, 5, 6]), on enlève les éléments de ens2\n
+        print(ens1 & ens2) set([2, 3, 4]) car ce sont les seuls à être en même temps dans ens1 et ens2\n
+        print(ens1 | ens3) set([1, 2, 3, 4, 5, 6, 7, 8, 9]), les deux réunis\n
+        print(ens1 & ens3) set([6]), même raison que deux lignes au dessus\n
+        print(ens1 ^ ens3) set([1, 2, 3, 4, 5, 7, 8, 9]), l'union moins les éléments communs\n
+        print(ens1 - ens2) set([1, 5, 6]), on enlève les éléments de ens2
 
-    Example:
+    Examples:
         >>> l1 = [1, 2, 3, 4, 5, 6]
         >>> l2 = [6, 7, 8, 9]
         >>> com, u1, u2 = compare_list(l1, l2)
@@ -137,6 +135,220 @@ def compare_list(list1, list2):
     uniq1 = list(ens1 - ens2)
     uniq2 = list(ens2 - ens1)
     return sorted(common, key=sort_human), sorted(uniq1, key=sort_human), sorted(uniq2, key=sort_human)
+
+
+def concat_fasta_files(path_directory):
+    """
+    Return a fasta dictionnary of concatenation fasta file's find in directory ("fasta", "fa", "fas")
+
+    Warning:
+        Sequence on fasta must have the same name
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - BioPython
+
+    Arguments:
+        path_directory (str): a path to fasta file directory
+
+    Returns:
+        :class:`dict`: python dict with the concatenation of fasta filename in path_directory ( file with extention "fa", "fasta", "fas" )
+
+    Raises:
+         ValueError: If `path_directory` does not exist.
+         ValueError: If `path_directory` is not a valid directory.
+
+    Example:
+        >>> dico_concat = concat_fasta_files('path/to/directory/')
+        >>> print(dico_concat)
+            {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
+    """
+    from pathlib import Path
+    from Bio import SeqIO
+
+    if not Path(path_directory).exists():
+        raise ValueError(f'ERROR: directory "{path_directory}" does not exist')
+    elif not Path(path_directory).is_dir():
+        raise ValueError(f'ERROR: "{path_directory} " is not a valid directory')
+
+    path_directory = Path(path_directory).resolve()
+    fa_files = path_directory.glob("*.fa")
+    fasta_files = path_directory.glob("*.fasta")
+    fas_files = path_directory.glob("*.fas")
+
+    output_dico_seqs = {}
+
+    for fasta_file in (*fa_files, *fasta_files, *fas_files):
+            # print(fasta_file)
+        with open(fasta_file.as_posix(), "rU") as handle:
+            record_dict = SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
+        for seq_name in sorted(record_dict.keys()):
+             if seq_name not in output_dico_seqs.keys():
+                name = record_dict[seq_name].id
+                seq = record_dict[seq_name].seq
+                output_dico_seqs[name] = seq
+             else:
+                name = record_dict[seq_name].id
+                seq = record_dict[seq_name].seq
+                output_dico_seqs[name] += seq
+
+    return output_dico_seqs
+
+def convert_fasta_2_nexus(path_directory, path_directory_out):
+    """
+    Return the number of fasta file's convert  find in directory ("fasta", "fa", "fas") where are converted
+
+    Warning:
+        Sequence on fasta must align and have the same length
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - BioPython
+
+    Arguments:
+        path_directory (str): a path to fasta file directory
+        path_directory_out (str): a directory path to write nexus file
+
+    Returns:
+        :class:`int`: the number of file converted
+
+    Raises:
+         ValueError: If `path_directory` does not exist.
+         ValueError: If `path_directory` is not a valid directory.
+         ValueError: If fasta is not align.
+
+    Example:
+        >>> nb_file = convert_fasta_2_nexus('path/to/directory/',' path/to/directory/')
+        >>> print(nb_file)
+            "4172"
+    """
+    from pathlib import Path
+    from Bio import AlignIO
+    from Bio.Nexus import Nexus
+
+    if not Path(path_directory).exists():
+        raise ValueError(f'ERROR: directory "{path_directory}" does not exist')
+    elif not Path(path_directory).is_dir():
+        raise ValueError(f'ERROR: "{path_directory} " is not a valid directory')
+
+    path_directory = Path(path_directory).resolve()
+    path_directory_out = Path(path_directory_out).resolve()
+    if not path_directory_out.exists():
+        path_directory_out.mkdir()
+
+    fa_files = path_directory.glob("*.fa")
+    fasta_files = path_directory.glob("*.fasta")
+    fas_files = path_directory.glob("*.fas")
+
+    # general variables:
+    minimal_record = f'#NEXUS\nbegin data; dimensions ntax=0 nchar=0; format datatype=dna; end;'
+    count_convert = 0
+
+    for fasta_file in (*fa_files, *fasta_files, *fas_files):
+        try:
+            count_convert += 1
+            print(Path(fasta_file))
+            basename = Path(fasta_file).stem
+            alignment = AlignIO.read(fasta_file.as_posix(), format='fasta')
+            n = Nexus.Nexus(minimal_record)
+            n.alphabet = alignment._alphabet
+            for record in alignment:
+                n.add_sequence(record.id.replace("-", "_"), str(record.seq))
+            n.write_nexus_data(f"{path_directory_out.as_posix()}/{basename}.nex", interleave=False)
+        except ValueError as e:
+            raise ValueError(f"ERROR on file {fasta_file}, with message: {e}, please check")
+
+    return count_convert
+
+
+def dict_2_txt(dico, sep="\t"):
+    """
+    Function that takes a dictionary and returns a string with separator::
+
+    Arguments:
+        dico (:obj:`dict`): the python dict to translate to formated string.
+        sep (:obj:`str`): the separator for join . Defaults to '\\t'.
+
+    Returns:
+        str: formated dict to string
+
+    Example:
+        >>> dico = {"key1":"value1","key2":"value2","key3":"value3"}
+        >>> dict_2_txt(dico)
+        key1	value1
+        key2	value2
+        key3	value3
+        >>> dict_2_txt(dico, sep=";")
+        key1;value1
+        key2;value2
+        key3;value3
+
+    Warning: if the value of the dict is list or dictionary, the display will be plain and without formatting data.
+    """
+
+    return "".join([f"{key}{sep}{dico[key]}\n" for key in sorted(dico.keys(), key=sort_human)])
+
+def dict_2_fasta(dico, fasta_out):
+    """
+    Function that takes a dictionary where key are ID and value Seq, and write a fasta file.
+
+    Notes:
+        function need modules:
+
+        - pathlib
+        - BioPython
+
+    Arguments:
+        dico (dict): python dict with ID in key and Seq on values
+        fasta_out (str): a directory path to write nexus file
+
+    Returns:
+        :class:`str`: the output fasta file name
+
+    Example:
+        >>> dico = {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
+        >>> dict_2_fasta(dico)
+        >Seq1
+        ATGCTGCAGTAG
+        >Seq2
+        ATGCCGATCGATG
+        >Seq3
+        ATGCTCAGTCAGTAG
+    """
+    from pathlib import Path
+    from Bio import SeqIO
+    from Bio.Seq import Seq
+    from Bio.SeqRecord import SeqRecord
+
+    with open(Path(fasta_out).resolve().as_posix(), "w") as output_handle:
+        for seq_name in sorted(dico.keys()):
+            seq_obj = Seq(dico[seq_name])
+            record = SeqRecord(seq_obj, id=seq_name, name=seq_name, description="")
+            SeqIO.write(record, output_handle, "fasta")
+    return output_handle.name
+
+
+def max_key_dict(dico):
+    """
+    Function return the key of max value in dico values()
+
+    Arguments:
+        dico (:obj:`dict`): a python :class:`dict`
+
+    Returns:
+        str: key of the dict
+
+    Example:
+        >>> dico = {"A":0.5, "C":0.7, "T":0.01, "G":0.9}
+        >>> key_max = max_key_dict(dico)
+        >>> print(key_max)
+        G
+    """
+    return max(dico, key=dico.get)
 
 
 def sort_human(list, _nsre=re.compile('([0-9]+)')):
@@ -165,7 +377,8 @@ def sort_human(list, _nsre=re.compile('([0-9]+)')):
         return [int(text) if text.isdigit() else text.lower() for text in re.split(_nsre, list)]
     except TypeError:
         if not isinstance(list, int):
-            warnings.warn(f"WARNNING Yoda_powers::sort_human : List {list} value not understand so don't sort \n", SyntaxWarning, stacklevel=2)
+            warnings.warn(f"WARNNING Yoda_powers::sort_human : List {list} value not understand so don't sort \n",
+                          SyntaxWarning, stacklevel=2)
         return list
 
 
@@ -192,28 +405,6 @@ def existant_file(path):
     return Path(path).resolve()
 
 
-def dict2txt(dico):
-    """
-    Function that takes a dictionary and returns a tabular string with::
-
-        "key\\tvalue\\n".
-
-    :param dico: a python dictionary
-    :type dico: dict()
-    :rtype: str()
-    :return: string with "key\\tvalue\\n
-
-    Example:
-        >>> dico = {"key1":"value1","key2":"value2","key3":"value3"}
-        >>> dict2txt(dico)
-        key1	value1
-        key2	value2
-        key3	value3
-
-    :warn: if the value of the value list or dictionary, the display will be plain and without formatting data.
-    """
-
-    return "".join([f"{key}\t{dico[key]}\n" for key in sorted(dico.keys(), key=sort_human)])
 
 
 def dict_list2txt(dico, sep="\t"):
@@ -271,37 +462,13 @@ def dict_dict2txt(dico, first="Info", sep="\t"):
 
     txt_output = f'{first}{sep}{sep.join(list(dico.values())[0].keys())}\n'
     for row_name in sorted(dico.keys(), key=sort_human):
-        value = sep.join([str(dico[row_name][key2]) if key2 in dico[row_name].keys() else "None" for key2 in list(dico.values())[0].keys()])
+        value = sep.join([str(dico[row_name][key2]) if key2 in dico[row_name].keys() else "None" for key2 in
+                          list(dico.values())[0].keys()])
         txt_output += f"{row_name}{sep}{value}\n"
     return txt_output
 
 
-def dict2fasta(dico, file_name):
-    """
-    Function that takes a dictionary with key are ID and value Seq, and returns a fasta string.
 
-    :param dico: a python dictionary
-    :type dico: dict()
-    :param fileName: a file name for fasta
-    :type fileName: str()
-    :rtype: file file()
-    :return: file format fasta
-
-    Example:
-        >>> dico = {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
-        >>> dict2fasta(dico)
-        >Seq1
-        ATGCTGCAGTAG
-        >Seq2
-        ATGCCGATCGATG
-        >Seq3
-        ATGCTCAGTCAGTAG
-    """
-    with open(file_name, "w") as output_handle:
-        for seq_name in sorted(dico.keys(), key=sort_human):
-            seqObj = dico[seq_name]
-            record = SeqRecord(seqObj, id=seq_name, name=seq_name, description="")
-            SeqIO.write(record, output_handle, "fasta")
 
 
 def fasta2dict(filename):
@@ -873,119 +1040,6 @@ def lsExtInDirToList(pathDirectory, extentionFichierKeep):
 
     return sorted(lsFilesFasta)
 
-
-def concatFastasFiles(pathDirectory):
-    """
-    Return a fasta dictionnary of concatenation fasta file's find in directory ("fasta", "fa", "fas")
-
-    :param pathDirectory: a directory Path
-    :type pathDirectory: Path
-    :rtype: dict()
-    :return: dict of concatenation fasta filename in pathDirectory ( file with extention "fa", "fasta", "fas" )
-
-    Example:
-        >>> dico_concate = concatFastasFiles(path/to/directory/)
-        >>> print(dico_concate)
-            {"Seq1":"ATGCTGCAGTAG","Seq2":"ATGCCGATCGATG","Seq3":"ATGCTCAGTCAGTAG"}
-    """
-    outputDicoSeqs = {}
-    listFiles = []
-
-    if pathDirectory[-1] != "/":
-        pathDirectory += "/"
-    if pathDirectory[-1] != "*":
-        pathDirectory += "*"
-
-    directoryFiles = glob.glob(pathDirectory)
-    # Ouverture des fichiers du repertoire pour stocker les sequences en mémoire
-    for fichier in directoryFiles:
-        try:
-            nameFichier = fichier.split("/")[-1].split(".")[0]
-            extentionFichier = fichier.split("/")[-1].split(".")[-1]
-        except:
-            extentionFichier = "directory"
-        if extentionFichier in ["fasta", "fa", "fas"]:
-            listFiles.append(fichier)
-
-    try:
-        for fasta in listFiles:
-            # Ouverture des sequences fasta et chargement dans dictionnaire
-            file = "%s" % (fasta)
-            # print(file)
-            record_dict = fasta2dict(file)
-            for ind in record_dict.keys():
-                if ind not in outputDicoSeqs.keys():
-                    name = record_dict[ind].id
-                    # print(name)
-                    seq = record_dict[ind].seq
-                    outputDicoSeqs[name] = seq
-                else:
-                    name = record_dict[ind].id
-                    # print(name)
-                    seq = record_dict[ind].seq
-                    outputDicoSeqs[name] += seq
-    except:
-        print(fasta)
-    # print(name)
-    # print(outputDicoSeqs[name])
-    return outputDicoSeqs
-
-
-def convertFasta2Nexus(pathDirectoryIn, pathDirectoryOut):
-    """
-    Return the number of fasta file's convert  find in directory ("fasta", "fa", "fas") where are converted
-
-    :param pathDirectoryIn: a directory Path
-    :type pathDirectoryIn: Path
-    :param pathDirectoryOut: a directory Path
-    :type pathDirectoryOut: Path
-    :rtype: int()
-    :return: pathDirectory with file's converted and nb file converted( file with extention "nex" )
-
-    Example:
-        >>> nbFileConvert = convertFasta2Nexus(path/to/directory/, path/to/directory/)
-        >>> print(nbFileConvert)
-            "4172"
-    """
-    countFilesConvert = 0
-    fastaFiles = lsFastaInDirToList(pathDirectoryIn)
-    if pathDirectoryIn[-1] != "/":
-        pathDirectoryIn += "/"
-    if pathDirectoryOut[-1] != "/":
-        pathDirectoryOut += "/"
-
-    # general variables:
-    minimal_record = "#NEXUS\nbegin data; dimensions ntax=0 nchar=0; format datatype=%s; end;" % "dna"
-
-    for fileFasta in fastaFiles:
-        try:
-            countFilesConvert += 1
-            filefastaName = fileFasta.split("/")[-1].split(".")[0]
-            alignment = AlignIO.read(fileFasta, format='fasta')
-            lenAlignement = int(alignment.get_alignment_length())
-            n = Nexus.Nexus(minimal_record)
-            n.alphabet = alignment._alphabet
-            for record in alignment:
-                n.add_sequence(record.id.replace("-", "_"), str(record.seq))
-            n.write_nexus_data(pathDirectoryOut + filefastaName + ".nex", interleave=False)
-        except ValueError:
-            print(fileFasta)
-            print(lenAlignement)
-
-    return countFilesConvert
-
-
-# input_handle = open(fileFasta, "rU")
-# filefastaName = fileFasta.split("/")[-1].split(".")[0]
-# output_handle = open(pathDirectoryOut+filefastaName+".nex", "w")
-
-# alignments = AlignIO.read(input_handle, "fasta", alphabet=Gapped(IUPAC.unambiguous_dna, "-"))
-# AlignIO.write(alignments, output_handle, "nexus", interleave="FALSE")
-
-# outputfilename.close()
-# input_handle.close()
-
-
 def printcolor(txt, color, noprint=1):
     """	Return the printed color txt format
 
@@ -1484,7 +1538,7 @@ class StrSpaceList(list):
                     else:
                         raise ValueError(
                                 "\"%s\" is greater than \"%s\" ( %s < value < %s )" % (
-                                num, self.max, self.min, self.max))
+                                        num, self.max, self.min, self.max))
                 except ValueError as infos:
                     raise ValueError("%s" % infos)
             try:
