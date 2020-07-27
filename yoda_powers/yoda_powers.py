@@ -50,7 +50,7 @@ Required Module install
 
 This module run with Python 3.x and not Python 2.x
 
-** Include module of python:**
+** Include import of default python:**
     - argparse,
     - os,
     - subprocess,
@@ -62,12 +62,12 @@ This module run with Python 3.x and not Python 2.x
     - gzip,
     - urllib,
 
-** Module need to install before use:**
+** Modules install with :class:`yoda_powers`:**
     - BioPython
     - pyvcf
     - pyfaidx
 
-more info at https://readthedocs.org/projects/yoda-powers
+more info at https://yoda-powers.readthedocs.io/en/latest/
 
 Table of contents
 -----------------
@@ -82,10 +82,11 @@ def max_key_dict(dico):
     """
     Function return the key of max value in dico values()
 
-    :param dico: a python :class:`dict`
-    :type dico: :class:`dict`
-    :return: key
-    :rtype: key
+    Arguments:
+        dico (dict): a python :class:`dict`
+
+    Returns:
+        str: key of the dict
 
     Example:
         >>> dico = {"A":0.5, "C":0.7, "T":0.01, "G":0.9}
@@ -100,21 +101,22 @@ def compare_list(list1, list2):
     """
     Function to compare two list and return common, uniq1 and uniq2
 
-    :param list1: a python :class:`list`
-    :type list1: :class:`list`
-    :param list2: a python :class:`list`
-    :type list2: :class:`list`
-    :return: common, u1, u2
-    :rtype: :class:`list`, :class:`list`, :class:`list`
-    :note: ens1 = set([1, 2, 3, 4, 5, 6])
-    :note: ens2 = set([2, 3, 4])
-    :note: ens3 = set([6, 7, 8, 9])
-    :note: print ens1 & ens2 set([2, 3, 4]) car ce sont les seuls à être en même temps dans ens1 et ens2
-    :note: print ens1 | ens3 set([1, 2, 3, 4, 5, 6, 7, 8, 9]), les deux réunis
-    :note: print ens1 & ens3 set([6]), même raison que deux lignes au dessus
-    :note: print ens1 ^ ens3 set([1, 2, 3, 4, 5, 7, 8, 9]), l'union moins les éléments communs
-    :note: print ens1 - ens2 set([1, 5, 6]), on enlève les éléments de ens2
+    Arguments:
+        list1 (list): the first python :class:`list`
+        list2 (list): the second python :class:`list`
 
+    Returns:
+        list: common, u1, u2 \ncommon: the common elements of the 2 list,\nu1: uniq to list1,\nu2: uniq to list2
+
+    Notes:
+        ens1 = set([1, 2, 3, 4, 5, 6])\n
+        ens2 = set([2, 3, 4])\n
+        ens3 = set([6, 7, 8, 9])\n
+        `print(ens1 & ens2)` set([2, 3, 4]) car ce sont les seuls à être en même temps dans ens1 et ens2\n
+        `print(ens1 | ens3)` set([1, 2, 3, 4, 5, 6, 7, 8, 9]), les deux réunis\n
+        `print(ens1 & ens3)` set([6]), même raison que deux lignes au dessus\n
+        `print(ens1 ^ ens3)` set([1, 2, 3, 4, 5, 7, 8, 9]), l'union moins les éléments communs\n
+        `print(ens1 - ens2)` set([1, 5, 6]), on enlève les éléments de ens2\n
 
     Example:
         >>> l1 = [1, 2, 3, 4, 5, 6]
@@ -138,7 +140,10 @@ def compare_list(list1, list2):
 
 
 def sort_human(list, _nsre=re.compile('([0-9]+)')):
-    """ Sort the :class:`list` with alpha/digit on the way that humans expect, use list.sort(key=sort_human) or sorted(list, key=sort_human)).
+    """
+    Sort a :class:`list` with alpha/digit on the way that humans expect,\n
+    use list.sort(key=sort_human) or\n
+    sorted(list, key=sort_human)).
 
     :param list: a python :class:`list`
     :type list: :class:`list`

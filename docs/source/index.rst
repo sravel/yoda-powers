@@ -11,7 +11,13 @@ About this package
 
 Use it to import very handy functions.
 
+.. toctree::
+   :caption: Scripts documentation
+   :name: scripts
+   :glob:
+   :maxdepth: 0
 
+   ./scripts/*
 
 .. toctree::
    :caption: API documentation
@@ -20,13 +26,6 @@ Use it to import very handy functions.
    :maxdepth: 4
 
    ./module/*
-
-
-
-
-
-
-
 
 
 Indices and tables
