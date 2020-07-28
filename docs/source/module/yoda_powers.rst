@@ -1,0 +1,1 @@
+.. automodule:: yoda_powers

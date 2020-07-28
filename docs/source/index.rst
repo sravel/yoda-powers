@@ -22,10 +22,31 @@ Use it to import very handy functions.
 .. toctree::
    :caption: API documentation
    :name: API
-   :glob:
    :maxdepth: 4
 
-   ./module/*
+   ./module/yoda_powers
+
+.. toctree::
+   :caption: Toolbox
+   :name: toolbox
+   :maxdepth: 4
+
+   ./module/toolbox
+
+.. toctree::
+   :caption: Display
+   :name: display
+   :maxdepth: 4
+
+   ./module/display
+
+.. toctree::
+   :caption: Bio
+   :name: bio
+   :maxdepth: 4
+
+   ./module/bio
+
 
 
 Indices and tables
