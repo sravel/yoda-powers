@@ -5,21 +5,4 @@ version: 2
 sphinx:
   configuration: docs/source/conf.py
 
-submodules:
-  include: all
 
-# Optionally build your docs in additional formats such as PDF
-formats:
-  - pdf
-
-# Optionally set the version of Python and requirements required to build your docs
-python:
-   version: 3.7
-   install:
-      - method: pip
-        path: .
-        extra_requirements:
-           - docs
-      - method: setuptools
-        path: package
-      - requirements: requirements.txt
