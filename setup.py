@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-# sys.path.insert(0, HERE)
+sys.path.insert(0, HERE)
 sys.path.insert(0, HERE + "/yoda_powers")
 import yoda_powers
 ########################################################################
