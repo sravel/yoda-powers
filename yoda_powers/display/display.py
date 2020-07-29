@@ -9,15 +9,7 @@ import os
 import glob
 import re
 from pathlib import Path
-
-# BIO Python modules
-from Bio import SeqIO
-
-# ParseGFF modules
-from collections import namedtuple
-import gzip
-import urllib
-
+from ..toolbox import sort_human
 
 ##################################################
 # Functions
@@ -48,7 +40,7 @@ def dict_2_txt(dico, sep="\t"):
     Warning: if the value of the dict is list or dictionary, the display will be plain and without formatting data.
     """
 
-    return "".join([f"{key}{sep}{dico[key]}\n" for key in sorted(dico.keys(), key=sort_human)])
+    return "\n".join([f"{key}{sep}{dico[key]}" for key in sorted(dico.keys(), key=sort_human)])
 
 
 def dict_dict_2_txt(dico, first="Info", sep="\t"):

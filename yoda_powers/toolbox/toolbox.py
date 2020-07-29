@@ -5,10 +5,8 @@
 # Modules
 ##################################################
 # Python modules
-import os
-import glob
-import re
-from pathlib import Path
+from pathlib import PosixPath
+
 
 ##################################################
 # Functions
@@ -70,7 +68,7 @@ def existant_file(path):
 
 
     Arguments:
-        path (str): a path to eixstant file
+        path (str): a path to existent file
 
     Returns:
         :class:`PosixPath`: ``Path(path).resolve()``
@@ -94,11 +92,9 @@ def existant_file(path):
         # error: argument input: x does not exist
         raise ArgumentTypeError(f'ERROR: file "{path}" does not exist')
     elif not Path(path).is_file():
-        raise ArgumentTypeError(f'ERROR: "{path} " is not a valid file')
+        raise ArgumentTypeError(f'ERROR: "{path}" is not a valid file')
 
     return Path(path).resolve()
-
-
 
 
 def max_key_dict(dico):
@@ -150,30 +146,54 @@ def sort_human(in_list, _nsre=None):
         return [int(text) if text.isdigit() else f"{text}".lower() for text in re.split(_nsre, in_list)]
     except TypeError as e:
         if not isinstance(in_list, int):
-            warn(f"Yoda_powers::sort_human : element '{in_list}' on the list not understand so don't sort this element\n",
-                          SyntaxWarning, stacklevel=2)
+            warn(
+                    f"Yoda_powers::sort_human : element '{in_list}' on the list not understand so don't sort this element\n",
+                    SyntaxWarning, stacklevel=2)
             return in_list
+
 
 def readable_dir(prospective_dir):
     """
     Check if directory exist and if is readable
+    'Type' for argparse - checks that directory exists and  if readable, then return the absolute path as PosixPath() with pathlib
 
-    :param prospective_dir: a directory Path
-    :type prospective_dir: Path
+    Notes:
+        function need modules:
 
-    :raise error: raise argparse.ArgumentTypeError(" :{0} is not a valid path".format(prospective_dir))
-    :raise error: raise argparse.ArgumentTypeError(" :{0} is not a readable dir".format(prospective_dir))
+        - pathlib
+        - argparse
 
-    Example:
-        >>> parser = argparse.ArgumentParser(prog='make_structure_dir.py', description='''This Programme make arborescence of rep of programme structure''')
-        >>> paths = parser.add_argument_group('Input PATH for running')
-        >>> paths.add_argument('-p', '--path', metavar="<path/to/>", type = readable_dir, required=True, dest = 'pathParam', help = 'Path to ')
+
+    Arguments:
+        prospective_dir (str): a path to existent path
+
+    Returns:
+        :class:`PosixPath`: ``Path(path).resolve()``
+
+    Raises:
+         ArgumentTypeError: If directory `path` does not exist.
+         ArgumentTypeError: If `path` is not a valid directory.
+
+    Examples:
+        >>> import argparse
+        >>> parser = argparse.ArgumentParser(prog='test.py', description='''This is demo''')
+        >>> parser.add_argument('-f', '--file', metavar="<path/to/file>",type=readable_dir, required=True,
+            dest='path_file', help='path to file')
     """
+    from argparse import ArgumentTypeError
+    from pathlib import Path
+    import os
 
-    if not os.path.isdir(prospective_dir):
-        raise argparse.ArgumentTypeError(" :{0} is not a valid path".format(prospective_dir))
-    if os.access(prospective_dir, os.R_OK) == False:
-        raise argparse.ArgumentTypeError(" :{0} is not a readable dir".format(prospective_dir))
+    if not Path(prospective_dir).exists():
+        # Argparse uses the ArgumentTypeError to give a rejection message like:
+        # error: argument input: x does not exist
+        raise ArgumentTypeError(f'ERROR: directory "{prospective_dir}" does not exist')
+    elif not Path(prospective_dir).is_dir():
+        raise ArgumentTypeError(f'ERROR: "{prospective_dir}" is not a valid directory')
+    elif not os.access(prospective_dir, os.R_OK):
+        raise ArgumentTypeError(f'ERROR: "{prospective_dir}" is not a readable dir')
+
+    return Path(prospective_dir).resolve()
 
 
 def replace_all(repls, str):
@@ -441,13 +461,6 @@ def lsDirToList(pathDirectory):
         ["./out/gemo10_4497_ortho_rename_add.fasta", "./out/gemo10_6825_ortho_rename_add.fasta", "./out/gemo10_3497_ortho_rename_add.fasta", "./out/rename/"]
     """
 
-    if pathDirectory[-1] != "/":
-        pathDirectory += "/"
-    if pathDirectory[-1] != "*":
-        pathDirectory += "*"
-    lsFiles = glob.glob(pathDirectory)
-    return lsFiles
-
 
 def lsFastaInDirToList(pathDirectory):
     """
@@ -463,24 +476,6 @@ def lsFastaInDirToList(pathDirectory):
         >>> print(lsDirectory)
         ["./out/gemo10_4497_ortho_rename_add.fasta", "./out/gemo10_6825_ortho_rename_add.fasta", "./out/gemo10_3497_ortho_rename_add.fasta"]
     """
-
-    lsFilesFasta = []
-    if pathDirectory[-1] != "/":
-        pathDirectory += "/"
-    if pathDirectory[-1] != "*":
-        pathDirectory += "*"
-    directoryFiles = glob.glob(pathDirectory)
-    # Ouverture des fichiers du repertoire pour stocker les sequences en mémoire
-    for fichier in directoryFiles:
-        try:
-            nameFichier = fichier.split("/")[-1].split(".")[0]
-            extentionFichier = fichier.split("/")[-1].split(".")[-1]
-        except:
-            extentionFichier = "directory"
-        if extentionFichier in ["fasta", "fa", "fas"]:
-            lsFilesFasta.append(fichier)
-
-    return sorted(lsFilesFasta)
 
 
 def lsExtInDirToList(pathDirectory, extentionFichierKeep):
@@ -499,29 +494,6 @@ def lsExtInDirToList(pathDirectory, extentionFichierKeep):
         >>> print(lsDirectory)
         ["./out/gemo10_4497_ortho_rename_add.txt", "./out/gemo10_6825_ortho_rename_add.txt", "./out/gemo10_3497_ortho_rename_add.txt"]
     """
-
-    lsFilesFasta = []
-    if pathDirectory[-1] != "/":
-        pathDirectory += "/"
-    if pathDirectory[-1] != "*":
-        pathDirectory += "*"
-    directoryFiles = glob.glob(pathDirectory)
-
-    # Ouverture des fichiers du repertoire pour stocker les sequences en mémoire
-    for fichier in directoryFiles:
-        try:
-            if "." in fichier.split("/")[-1]:
-                nameFichier = fichier.split("/")[-1].split(".")[0]
-                extentionFichier = fichier.split("/")[-1].split(".")[-1]
-            else:
-                nameFichier = fichier.split("/")[-1]
-                extentionFichier = ""
-        except:
-            extentionFichier = "directory"
-        if extentionFichier == extentionFichierKeep:
-            lsFilesFasta.append(fichier)
-
-    return sorted(lsFilesFasta)
 
 
 def printcolor(txt, color, noprint=1):
@@ -558,6 +530,7 @@ def printcolor(txt, color, noprint=1):
     else:
         txtout = "Error, color value non exist, please check other color\n\n" + txt
 
+
 #################################################
 # CLASS
 #################################################
@@ -572,7 +545,6 @@ class printCol():
     j'affiche en rouge
 
     """
-
     __RED = '\033[91m'
     __GREEN = '\033[92m'
     __YELLOW = '\033[93m'
@@ -582,23 +554,23 @@ class printCol():
 
     @classmethod
     def red(cls, s):
-        print(cls.__RED + str(s) + cls.__END)
+        print(f"{cls.__RED}{s}{cls.__END}")
 
     @classmethod
     def green(cls, s):
-        print(cls.__GREEN + str(s) + cls.__END)
+        print(f"{cls.__GREEN}{s}{cls.__END}")
 
     @classmethod
     def yellow(cls, s):
-        print(cls.__YELLOW + str(s) + cls.__END)
+        print(f"{cls.__YELLOW}{s}{cls.__END}")
 
     @classmethod
     def lightPurple(cls, s):
-        print(cls.__LIGHT_PURPLE + str(s) + cls.__END)
+        print(f"{cls.__LIGHT_PURPLE}{s}{cls.__END}")
 
     @classmethod
     def purple(cls, s):
-        print(cls.__PURPLE + str(s) + cls.__END)
+        print(f"{cls.__PURPLE}{s}{cls.__END}")
 
 
 class AutoVivification(dict):
@@ -625,97 +597,72 @@ class AutoVivification(dict):
 
 
 # *********************************************** Classe directory *******************
-class directory(str):
-    """
-    Class which derives from string.
-    Checks that the string is and path to valid directory and not empty
 
-    Returns object which able to return basename and list file (with an extention, else consider as folder)
+class Directory(PosixPath):
+    """
+    Class which derives from PosixPath.
+    Checks that the string is and path to valid directory
+    add function like list all files/dirs
 
     Example:
-
-    >>> inDirectory=directory("/home/sravel/Documents")
-    >>> print(inDirectory.pathDirectory())
-    >>> /home/sravel/Documents/
-
-    >>> print(inDirectory.listFiles())
-    >>> ["File1.txt","File2.pl","file.toto"]
+        >>> dir = Directory("./")
+        >>> print(dir)
+        >>> print(dir.list_files)
+        >>> for file in dir.list_files_ext([".py"]):
+        >>>     print(file)
     """
 
-    def __init__(self, pathDirectory=None):
+    def __init__(self, path_directory=None):
         """
-            Initialise variable
+        Arguments:
+            path_directory (str): a path to directory
         """
-        self.listPath = []  # all in the path
-        self.listDir = []  # only directory in path
-        self.listFiles = []  # only files in path
+        from pathlib import Path
 
-        self.current_dir = os.path.dirname(os.path.abspath(__file__))
+        if not Path(path_directory).exists():
+            raise ValueError(f'ERROR: Yoda_powers.toolbox.directory "{path_directory}" does not exist')
+        elif not Path(path_directory).is_dir():
+            raise ValueError(f'ERROR: Yoda_powers.toolbox.directory "{path_directory} " is not a valid directory')
 
-        # Change relative path to absolute path
-        self.pathDirectory = relativeToAbsolutePath(pathDirectory)
+        self.path_directory = Path(path_directory).resolve()
+        self.__sep = "\n"
+        super().__init__()
 
-        # appel les fonctions
-        self.testDirExist()
-        self.lsInDir()
-        self.splitFilesDir()
+    @property
+    def list_path(self):
+        """Generator of files/directory include on folder"""
+        return self.path_directory.glob("*")
+
+    @property
+    def list_dir(self):
+        """Generator of directory include on folder"""
+        return (elm for elm in self.path_directory.glob("*") if elm.is_dir())
+
+    @property
+    def list_files(self):
+        """Generator of files include on folder"""
+        return (elm for elm in self.path_directory.glob("*") if elm.is_file())
+
+    def list_files_ext(self, ext=None):
+        """Generator of files with specify extension include on folder
+
+        Arguments:
+            ext (list): a list of extension like [".py"]
+        Yields:
+            :class:`PosixPath`: Generator of files with specify extension include on folder
+        """
+        if not isinstance(ext, list) or not ext:
+            raise ValueError(f'ERROR: Yoda_powers.toolbox.directory.list_files_ext() "ext" must be a list not "{ext}"')
+        return (elm for elm in self.path_directory.glob(f"**/*") if (elm.is_file() and elm.suffix in ext))
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
+        return f"{self.__class__}({self.__dict__})"
 
     def __str__(self):
-        """Fonction qui permet de formater le text de sortie lors du print du dictionnaire"""
-        return """
-pathDirectory=%s\n
-listPath=%s\n
-listDir=%s\n
-listFiles=%s\n
-""" % (self.pathDirectory, str(self.listPath), str(self.listDir), str(self.listFiles))
-
-    def testDirExist(self):
-        """Test l'existance du répertoire"""
-        if os.path.isdir(self.pathDirectory) != True:
-            raise ValueError("ERROR Yoda_powers::Class-directory : path '%s' is not valid path" % self.pathDirectory)
-
-    def lsInDir(self):
-        """List all in directory"""
-        self.testDirExist()
-        if self.pathDirectory[-1] != "/":
-            self.pathDirectory += "/"
-        if self.pathDirectory[-1] != "*":
-            pathDirectoryList = self.pathDirectory + "*"
-        self.listPath = glob.glob(pathDirectoryList)
-
-    def lsExtInDirToList(self, ext):
-        """List specific extention file in directory"""
-        lsFilesFasta = []
-        for fichier in self.listPath:
-            try:
-                if "." in fichier.split("/")[-1]:
-                    nameFichier = fichier.split("/")[-1].split(".")[0]
-                    extentionFichier = fichier.split("/")[-1].split(".")[-1]
-                else:
-                    nameFichier = fichier.split("/")[-1]
-                    extentionFichier = ""
-            except:
-                extentionFichier = "directory"
-            if extentionFichier in ext:
-                lsFilesFasta.append(fichier)
-        return sorted(lsFilesFasta, key=sort_human)
-
-    def splitFilesDir(self):
-        """list files and list directory"""
-        self.lsInDir()
-        self.listDir = []  # only directory in path
-        self.listFiles = []  # only files in path
-        # Ouverture des fichiers du repertoire
-        for fichier in self.listPath:
-            try:
-                if os.path.isdir(fichier) == True:  # C'est un dossier
-                    self.listDir.append(str(fichier))
-                elif os.path.exists(fichier) == True:  # C'est un fichier
-                    self.listFiles.append(str(fichier))
-            except:
-                raise ValueError(
-                        "ERROR Yoda_powers::Class-directory : path '%s' is not valide path contain other type (not files or directory)" % self.pathDirectory)
-
+        """print format"""
+        return f"""
+path_directory={self.path_directory}
+list_path:\n   - {"   - ".join([f'{elm.name}{self.__sep}' for elm in self.list_path])}
+list_dir:\n   - {"   - ".join([f'{elm.name}{self.__sep}' for elm in self.list_dir])}
+list_files:\n   - {"   - ".join([f'{elm.name}{self.__sep}' for elm in self.list_files])}
+"""
