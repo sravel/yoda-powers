@@ -1,6 +1,3 @@
-
-
-
 def build_parser():
     import argparse
     parser = argparse.ArgumentParser(description='Process some sdfsf.')
