@@ -4,5 +4,3 @@ sphinx>=3.1.2
 sphinx_automodapi>=0.12
 sphinxcontrib-napoleon>=0.7
 BioPython
-pyvcf
-pyfaidx

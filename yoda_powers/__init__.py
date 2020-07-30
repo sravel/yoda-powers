@@ -6,7 +6,7 @@ from . import display
 from . import toolbox
 
 ##################################################
-# Variables Globales
+# Variables Globals
 __version__ = "1.0.0"
 
 __doc__ = """
@@ -17,16 +17,32 @@ __doc__ = """
 
 Use it to import very handy functions.
 
+Warnings:
+    This module run with |PythonVersions|
+
 
 Install
 -------
+
+Required Module install
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Modules ``BioPython`` will be install with :class:`yoda_powers`:**
+
+Global install
+^^^^^^^^^^^^^^
+
 ::
 
     # not working yet, module in development
-    pip3 install yoda_powers
+    # for all users (require root privilege)
+    sudo pip3 install yoda_powers    
+    
+    # for own
+    pip3 install yoda_powers --user
 
-Install developing version
---------------------------
+Developing version
+^^^^^^^^^^^^^^^^^^
 
 If you want to use an **unofficial version** of the ``yoda_powers`` module, you need to work from
 a clone of this ``git`` repository.
@@ -44,28 +60,32 @@ following actions:
 
     $ sudo pip3 install -e .
 
-Required Module install
------------------------
+Sub module information
+----------------------
 
-This module run with Python 3.x and not Python 2.x
+This module are split on three sub-module
 
-** Modules install with :class:`yoda_powers`:**
-    - BioPython
-    - pyvcf
-    - pyfaidx
+- ``yoda_powers.toolbox``: handy functions common for many scripts to easy check file/directory, load file info, ...
+- ``yoda_powers.display``: handy functions to display/write python object like dict of dict.
+- ``yoda_powers.bio``: handy functions to manipulate biological data with Biopython.
 
-more info at https://yoda-powers.readthedocs.io/en/latest/
 
-Exemple of usage
+
+Example of usage
 ----------------
-
 Example:
 
->>> from yoda_powers import dict2txt
+>>> from yoda_powers.display import dict_2_txt
 >>> dico = {'key1':'value1','key2':'value2','key3':'value3'}
->>> dict2txt(dico)
+>>> dict_2_txt(dico)
 key1	value1
 key2	value2
 key3	value3
 
+
+more info at https://yoda-powers.readthedocs.io/en/latest/
+
+.. |PythonVersions| image:: https://img.shields.io/badge/python-3.6+-blue.svg
+   :target: https://www.python.org/downloads
+   :alt: Python /3.6+
 """

@@ -5,15 +5,10 @@
 # Modules
 ##################################################
 # Python modules
-import os
-import glob
-import re
-from pathlib import Path
 from ..toolbox import sort_human
 
 ##################################################
 # Functions
-
 
 def dict_2_txt(dico, sep="\t"):
     """

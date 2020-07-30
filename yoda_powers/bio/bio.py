@@ -1,9 +1,3 @@
-
-
-##################################################
-# Functions
-
-
 def concat_fasta_files(path_directory):
     """
     Return a fasta dictionnary of concatenation fasta file's find in directory ("fasta", "fa", "fas")
@@ -172,6 +166,7 @@ def dict_2_fasta(dico, fasta_out):
             SeqIO.write(record, output_handle, "fasta")
     return output_handle.name
 
+
 def extract_seq_from_fasta(fasta_file, wanted_file, include=True):
     """
     Function to extract sequence from fasta file
@@ -321,6 +316,8 @@ def len_seq_2_dict(fasta_file):
             lenseq = len(record_dict[gene].seq)
             dico_lenght[gene] = int(lenseq)
     return dico_lenght
+
+
 def nb_seq_files_2_dict(path_directory):
     """
     Function  that take a Path Directory and returna dictionnary with number of sequences in fasta file's
@@ -373,11 +370,10 @@ def nb_seq_files_2_dict(path_directory):
     return dicoNbSeqInFiles, dicoNbFilesNbSouche
 
 
-
-class parseGFF():
+class ParseGFF:
     """
     Parser of GFF3 file write in python.
-    return an object iterable containt GFFRecord()
+    return an object iterable contain GFFRecord()
 
     line in GFF3 return:
 
@@ -389,7 +385,7 @@ class parseGFF():
     GFFRecord has attributes can acces with record.value (ex: record.seqid):
 
     ==========  ===========================================================
-    attribut    infos
+    attribute    infos
     ==========  ===========================================================
     seqid       first column of gff3
     source      second column of gff3
@@ -405,7 +401,7 @@ class parseGFF():
     ==========  ===========================================================
 
     Example:
-        >>> objGFF = parseGFF(gffFile)
+        >>> objGFF = ParseGFF(gffFile)
         >>> for record in objGFF.parseGFF3():
         >>> 	print(record.seqid)
         >>> 	if record.type == "mRNA" :
@@ -414,14 +410,17 @@ class parseGFF():
     """
 
     def __init__(self, filename):
+        from collections import namedtuple
         # Initialized GeneInfo named tuple. Note: namedtuple is immutable
         self.filename = filename
         self.gffInfoFields = ["seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes",
                               "seq", "len"]
         self.GFFRecord = namedtuple("GFFRecord", self.gffInfoFields)
 
+    @staticmethod
     def parseGFFAttributes(self, attributeString):
         """Parse the GFF3 attribute column and return a dict"""
+        import urllib
         if attributeString == ".": return {}
         ret = {}
         for attribute in attributeString.split(";"):
@@ -436,10 +435,12 @@ class parseGFF():
 
         Supports transparent gzip decompression.
         """
+        import gzip
+        import urllib
         # Parse with transparent decompression
-        openFunc = gzip.open if self.filename.endswith(".gz") else open
-        with openFunc(self.filename) as infile:
-            for line in infile:
+        open_fn = gzip.open if self.filename.endswith(".gz") else open
+        with open_fn(self.filename) as in_file:
+            for line in in_file:
                 if line.startswith("#"): continue
                 parts = line.strip().split("\t")
                 # If this fails, the file format is not standard-compatible
@@ -461,4 +462,3 @@ class parseGFF():
                 # Alternatively, you can emit the dictionary here, if you need mutability:
                 #	yield normalizedInfo
                 yield self.GFFRecord(**normalizedInfo)
-

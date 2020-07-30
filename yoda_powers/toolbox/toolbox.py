@@ -144,7 +144,7 @@ def sort_human(in_list, _nsre=None):
         _nsre = re.compile('([0-9]+)')
     try:
         return [int(text) if text.isdigit() else f"{text}".lower() for text in re.split(_nsre, in_list)]
-    except TypeError as e:
+    except TypeError:
         if not isinstance(in_list, int):
             warn(
                     f"Yoda_powers::sort_human : element '{in_list}' on the list not understand so don't sort this element\n",
@@ -154,8 +154,7 @@ def sort_human(in_list, _nsre=None):
 
 def readable_dir(prospective_dir):
     """
-    Check if directory exist and if is readable
-    'Type' for argparse - checks that directory exists and  if readable, then return the absolute path as PosixPath() with pathlib
+    'Type' for argparse - checks that directory exists and if readable, then return the absolute path as PosixPath() with pathlib
 
     Notes:
         function need modules:
@@ -212,7 +211,7 @@ def replace_all(repls, str):
         >>> print(replace_all({"apple": "pear", "pear": "apple"}, text))
         i like pears, but apples scare me
     """
-
+    import re
     return re.sub('|'.join(re.escape(key) for key in repls.keys()), lambda k: repls[k.group(0)], str)
 
 
@@ -245,12 +244,9 @@ def load_in_list(filename):
     filename = Path(filename)
     if not filename.exists() or not filename.is_file():
         raise FileNotFoundError(
-            f'ERROR: Yoda_powers.toolbox.load_in_list() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
-    ext = filename.suffix
-    if ext != ".gz":
-        open_fn = open
-    else:
-        open_fn = gzip.open
+                f'ERROR: Yoda_powers.toolbox.load_in_list() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+
+    open_fn = gzip.open if filename.suffix == ".gz" else open
     with open_fn(filename, "rt") as file_in:
         return (line.rstrip() for line in file_in.readlines())
 
@@ -281,12 +277,8 @@ def load_in_list_col(filename, col=0, sep="\t"):
     filename = Path(filename)
     if not filename.exists() or not filename.is_file():
         raise FileNotFoundError(
-            f'ERROR: Yoda_powers.toolbox.load_in_list_col() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
-    ext = filename.suffix
-    if ext != ".gz":
-        open_fn = open
-    else:
-        open_fn = gzip.open
+                f'ERROR: Yoda_powers.toolbox.load_in_list_col() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+    open_fn = gzip.open if filename.suffix == ".gz" else open
     with open_fn(filename, "rt") as file_in:
         # yield from (line.rstrip().split(sep)[col] for line in file_in.readlines())
         return (line.rstrip().split(sep)[col] for line in file_in.readlines())
@@ -321,13 +313,9 @@ def load_in_dict(filename, sep="\t"):
     filename = Path(filename)
     if not filename.exists() or not filename.is_file():
         raise FileNotFoundError(
-            f'ERROR: Yoda_powers.toolbox.load_in_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
-    ext = filename.suffix
+                f'ERROR: Yoda_powers.toolbox.load_in_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
     dico_out = {}
-    if ext != ".gz":
-        open_fn = open
-    else:
-        open_fn = gzip.open
+    open_fn = gzip.open if filename.suffix == ".gz" else open
     with open_fn(filename, "rt") as file_in:
         for line in file_in:
             tab_line = line.rstrip().split(sep)
@@ -373,13 +361,9 @@ def load_in_dict_selected(filename, column_key=0, column_value=1, sep="\t"):
     filename = Path(filename)
     if not filename.exists() or not filename.is_file():
         raise FileNotFoundError(
-            f'ERROR: Yoda_powers.toolbox.load_in_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
-    ext = filename.suffix
+                f'ERROR: Yoda_powers.toolbox.load_in_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
     dico_out = {}
-    if ext != ".gz":
-        open_fn = open
-    else:
-        open_fn = gzip.open
+    open_fn = gzip.open if filename.suffix == ".gz" else open
     try:
         with open_fn(filename, "rt") as file_in:
             for num_line, line in enumerate(file_in):
@@ -424,13 +408,9 @@ def load_in_dict_dict(filename, sep="\t"):
     filename = Path(filename)
     if not filename.exists() or not filename.is_file():
         raise FileNotFoundError(
-            f'ERROR: Yoda_powers.toolbox.load_in_dict_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
-    ext = filename.suffix
+                f'ERROR: Yoda_powers.toolbox.load_in_dict_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
     dico_out = defaultdict(OrderedDict)
-    if ext != ".gz":
-        open_fn = open
-    else:
-        open_fn = gzip.open
+    open_fn = gzip.open if filename.suffix == ".gz" else open
     try:
         with open_fn(filename, "rt") as file_in:
             header = file_in.readline().rstrip().split(sep)
@@ -445,52 +425,17 @@ def load_in_dict_dict(filename, sep="\t"):
     return dico_out
 
 
-def printcolor(txt, color, noprint=1):
-    """	Return the printed color txt format
-
-    :param txt: a string
-    :type txt: string
-    :param color: a color value
-    :type color: string
-    :type noprint: int 0=noprint 1=print (default)
-    :rtype: string()
-    :return: string with acci color for printed
-    :warn: List of avail color: reset, hicolor, underline, inverse, fblack, fred, fgreen, fyellow, fblue, fmagenta, fcyan, fwhite, bblack, bred, bgreen, byellow, bblue, bmagenta, bcyan, bwhite
-
-    Example:
-        >>> printcolor("il fait beau aujourd'hui","bgreen")
-            "\\033[36mil fait beau aujourd'hui"
-        >>> txtcolor = printcolor("il fait beau aujourd'hui","bgreen", 0)
-
-    """
-    dicoColor = {
-            "reset" : "\033[0m", "hicolor": "\033[1m", "underline": "\033[4m", "inverse": "\033[7m",
-            "fblack": "\033[30m", "fred": "\033[31m", "fgreen": "\033[32m", "fyellow": "\033[1;33m",
-            "fblue" : "\033[34m", "fmagenta": "\033[35m", "fcyan": "\033[36m", "fwhite": "\033[37m",
-            "bblack": "\033[40m", "bred": "\033[41m", "bgreen": "\033[42m", "byellow": "\033[43m",
-            "bblue" : "\033[44m", "bmagenta": "\033[45m", "bcyan": "\033[46m", "bwhite": "\033[47m",
-    }
-    if color in dicoColor.keys():
-        txtout = dicoColor[color] + txt
-        if noprint == 0:
-            return txtout
-        else:
-            print(txtout)
-    else:
-        txtout = "Error, color value non exist, please check other color\n\n" + txt
-
-
 #################################################
 # CLASS
 #################################################
 
-class printCol():
+class PrintCol:
     """
     Classe qui ajoute des méthodes à print pour afficher de la couleur
 
     Example:
 
-    >>> printCol.red("j'affiche en rouge")
+    >>> PrintCol.red("j'affiche en rouge")
     j'affiche en rouge
 
     """
@@ -522,13 +467,13 @@ class printCol():
         print(f"{cls.__PURPLE}{s}{cls.__END}")
 
 
-class Auto_vivification(dict):
+class AutoVivification(dict):
     """
     Implementation of perl's autovivification feature.
 
     Example:
 
-    >>> a = Auto_vivification()
+    >>> a = AutoVivification()
     >>> a[1][2][3] = 4
     >>> a[1][3][3] = 5
     >>> a[1][2]['test'] = 6
@@ -568,7 +513,7 @@ class Directory(PosixPath):
 
         if not Path(path_directory).exists() or not Path(path_directory).is_dir():
             raise NotADirectoryError(
-                f'ERROR: Yoda_powers.toolbox.Directory() directory "{path_directory}" {"does not exist" if not Path(path_directory).exists() else "is not a valid directory"}')
+                    f'ERROR: Yoda_powers.toolbox.Directory() directory "{path_directory}" {"does not exist" if not Path(path_directory).exists() else "is not a valid directory"}')
 
         self.path_directory = Path(path_directory).resolve()
         self.__sep = "\n"

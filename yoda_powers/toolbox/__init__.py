@@ -5,9 +5,8 @@
 from .toolbox import *
 
 ##################################################
-# Variables Globales
+# Variables Globals
 
 __doc__ = """
-The display module
-
+ Handy functions common for many scripts to easy check file/directory, load file info, ...
 """

@@ -5,9 +5,9 @@
 from .bio import *
 
 ##################################################
-# Variables Globales
+# Variables Globals
 
 __doc__ = """
-The bio module
+Handy functions to manipulate biological data with Biopython.
 
 """

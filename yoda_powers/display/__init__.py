@@ -5,9 +5,8 @@
 from .display import *
 
 ##################################################
-# Variables Globales
+# Variables Globals
 
 __doc__ = """
-The display module
-
+Handy functions to display/write python object like dict of dict.
 """
