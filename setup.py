@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, HERE)
-sys.path.insert(0, HERE + "/yoda_powers")
+sys.path.insert(0, HERE + "/yoda_powers/")
 import yoda_powers
 
 
@@ -27,8 +27,8 @@ def main():
                             'project'   : ('setup.py', yoda_powers.__name__),
                             'version'   : ('setup.py', yoda_powers.__version__),
                             'release'   : ('setup.py', yoda_powers.__version__),
-                            'source_dir': ('setup.py', 'docs/source'),
-                            'build_dir' : ('setup.py', 'docs/build'),
+                            'source_dir': ('setup.py', './docs/source'),
+                            'build_dir' : ('setup.py', './docs/build'),
 
                     }},
             classifiers=[
@@ -49,6 +49,7 @@ def main():
             keywords=[
                     'python',
             ],
+            package_dir=["yoda_powers","yoda_powers"],
             packages=find_packages(),
             package_data={
                     'yoda_powers': ['*.ini'],
@@ -61,11 +62,11 @@ def main():
                     'bdist_wheel':
                         {'universal': True}
             },
+            # scripts=['./yoda_powers/scripts/'],
             zip_safe=False,  # Don't install the lib as an .egg zipfile
             entry_points={
                     'yoda_powers'    : ["yoda_powers = __init__"],
-                    'console_scripts': ["cli.py = yoda_powers.scripts.cli:main",
-                                        ]
+                    'console_scripts': ["cli.py = yoda_powers.scripts.cli:main", ]
             },
     )
 

@@ -24,6 +24,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../../yoda_powers/'))
 sys.path.insert(0, os.path.abspath('../../yoda_powers/scripts/'))
 
+PATH = os.path.abspath('../../yoda_powers/scripts/')
+
+# if os.environ.get('READTHEDOCS') == 'True':
+#     PATH = os.path.abspath('./yoda_powers/scripts/')
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -352,7 +357,7 @@ def setup(app):
 
     from sphinx.ext import apidoc
     app.connect('builder-inited', lambda _: apidoc.main([
-        '-o', './docs/source/scripts/', '-t', './docs/source/_templates', '-d1', '-feMT', './yoda_powers/scripts/',
+        '-o', './docs/source/scripts/', '-t', './docs/source/_templates', '-d1', '-feMT', PATH,
     ]))
     # app.connect('builder-inited', lambda _: apidoc.main([
     #     '-o', './docs/source/yoda_powers', '-d3', '-feTMP', './yoda_powers',
