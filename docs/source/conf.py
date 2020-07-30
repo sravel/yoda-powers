@@ -352,7 +352,7 @@ def setup(app):
 
     from sphinx.ext import apidoc
     app.connect('builder-inited', lambda _: apidoc.main([
-        '-o', './docs/source/scripts', '-t', './docs/source/_templates', '-d1', '-feMT', './yoda_powers/scripts/',
+        '-o', './docs/source/scripts/', '-t', './docs/source/_templates', '-d1', '-feMT', './yoda_powers/scripts/',
     ]))
     # app.connect('builder-inited', lambda _: apidoc.main([
     #     '-o', './docs/source/yoda_powers', '-d3', '-feTMP', './yoda_powers',
