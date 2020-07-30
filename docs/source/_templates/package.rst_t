@@ -16,7 +16,7 @@
 {%- if is_namespace %}
 {{- [pkgname, "namespace"] | join(" ") | e | heading }}
 {% else %}
-{{- [pkgname, "package"] | join(" ") | e | heading }}
+{{- [pkgname] | join(" ") | e | heading }}
 {% endif %}
 
 {%- if modulefirst and not is_namespace %}
@@ -31,8 +31,8 @@ Subpackages
 {% endif %}
 
 {%- if submodules %}
-Submodules
-----------
+Table of contents
+-----------------
 {% if separatemodules %}
 {{ toctree(submodules) }}
 {%- else %}

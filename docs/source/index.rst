@@ -14,10 +14,9 @@ Use it to import very handy functions.
 .. toctree::
    :caption: Scripts documentation
    :name: scripts
-   :glob:
-   :maxdepth: 0
+   :maxdepth: 3
 
-   ./scripts/*
+   ./scripts/scripts
 
 .. toctree::
    :caption: API documentation

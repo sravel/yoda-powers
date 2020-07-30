@@ -4,6 +4,7 @@
 from . import bio
 from . import display
 from . import toolbox
+from . import scripts
 
 ##################################################
 # Variables Globals
@@ -36,8 +37,8 @@ Global install
 
     # not working yet, module in development
     # for all users (require root privilege)
-    sudo pip3 install yoda_powers    
-    
+    sudo pip3 install yoda_powers
+
     # for own
     pip3 install yoda_powers --user
 

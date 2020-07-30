@@ -22,6 +22,7 @@ import os
 sys.path.insert(0, os.path.abspath('./'))
 sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../../yoda_powers/'))
+sys.path.insert(0, os.path.abspath('../../yoda_powers/scripts/'))
 
 # -- General configuration ------------------------------------------------
 
@@ -37,7 +38,8 @@ extensions = ['sphinx.ext.intersphinx',
               'sphinx.ext.autosectionlabel',
               'autodocsumm',
               'sphinx_automodapi.automodapi',
-              'sphinx.ext.napoleon'
+              'sphinx.ext.napoleon',
+              'sphinxcontrib.autoprogram'
               ]
 
 autodoc_default_options = {
@@ -49,7 +51,7 @@ autodoc_default_options = {
 }
 
 autosectionlabel_prefix_document = True
-autosectionlabel_maxdepth = 1
+autosectionlabel_maxdepth = 2
 autosummary_generate = False
 autosummary_generate_overwrite = False
 
@@ -349,9 +351,9 @@ def setup(app):
     # app.add_css_file('sphinx-argparse.css')
 
     from sphinx.ext import apidoc
-    # app.connect('builder-inited', lambda _: apidoc.main([
-    #     '-o', './source/scripts', '-t', './source/_templates', '-d1', '-feMT', '../scripts/',
-    # ]))
+    app.connect('builder-inited', lambda _: apidoc.main([
+        '-o', './docs/source/scripts', '-t', './docs/source/_templates', '-d1', '-feMT', './yoda_powers/scripts/',
+    ]))
     # app.connect('builder-inited', lambda _: apidoc.main([
     #     '-o', './docs/source/yoda_powers', '-d3', '-feTMP', './yoda_powers',
     # ]))
