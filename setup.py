@@ -56,8 +56,6 @@ def main():
             include_package_data=True,
             install_requires=[
                     'BioPython',
-                    'pyvcf',
-                    'pyfaidx'
             ],
             options={
                     'bdist_wheel':
