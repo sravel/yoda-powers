@@ -216,85 +216,99 @@ def replace_all(repls, str):
     return re.sub('|'.join(re.escape(key) for key in repls.keys()), lambda k: repls[k.group(0)], str)
 
 
-def loadInList(filename):
+def load_in_list(filename):
     """
-    Load file in list() and then remove \\n at end of line
+    Check file exist and create generator with no line break
+    file can be a gzip file with '.gz' extension
 
-    :param filename: a file
-    :type filename: file
-    :rtype: list()
-    :return: - list of row's file without \\n
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
+    Notes:
+        function need modules:
+
+        - pathlib
+
+    Arguments:
+        filename (str): a path to existent file
+
+    Yields:
+        :class:`str`: generator of rows without line break
+
+    Raises:
+         FileNotFoundError: If file `filename` does not exist or not valide file
 
     Example:
-        >>> rows = loadInList(filename)
-        >>> rows
+        >>> rows = load_in_list("filename")
+        >>> list(rows)
         ["i like pears, but apples scare me","i like apples, but pears scare me","End of file"]
     """
-    with open(filename, "r") as fileIn:
-        return [line.rstrip() for line in fileIn.readlines()]
+    from pathlib import Path
+    import gzip
+    filename = Path(filename)
+    if not filename.exists() or not filename.is_file():
+        raise FileNotFoundError(
+            f'ERROR: Yoda_powers.toolbox.load_in_list() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+    ext = filename.suffix
+    if ext != ".gz":
+        open_fn = open
+    else:
+        open_fn = gzip.open
+    with open_fn(filename, "rt") as file_in:
+        return (line.rstrip() for line in file_in.readlines())
 
 
-def loadInListCol(filename, col):
+def load_in_list_col(filename, col=0, sep="\t"):
     """
-    Load a column of file in list() and remove \\n at end of line
+    Check file exist and create generator with only selected column with no line break
+    file can be a gzip file with '.gz' extension
 
-    :param filename: a file
-    :type filename: file
-    :param col: a int of keep column
-    :type col: int
-    :rtype: list()
-    :return: - list of row's file from column without \\n if end column
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
+    Arguments:
+        filename (str): a path to existent file
+        col (int, default): the selected column (python index). Default=0
+        sep (str, default): the string separator. Default="\t"
+
+    Yields:
+        :class:`str`: generator of rows without line break
+
+    Raises:
+         FileNotFoundError: If file `filename` does not exist or not valide file
 
     Example:
-        >>> rows = loadInListCol(filename, 0)
-        >>> rows
+        >>> rows = load_in_list_col("filename", col=1, sep=";")
+        >>> list(rows)
         ["i like pears, but apples scare me","i like apples, but pears scare me","End of file"]
     """
+    from pathlib import Path
+    import gzip
+    filename = Path(filename)
+    if not filename.exists() or not filename.is_file():
+        raise FileNotFoundError(
+            f'ERROR: Yoda_powers.toolbox.load_in_list_col() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+    ext = filename.suffix
+    if ext != ".gz":
+        open_fn = open
+    else:
+        open_fn = gzip.open
+    with open_fn(filename, "rt") as file_in:
+        # yield from (line.rstrip().split(sep)[col] for line in file_in.readlines())
+        return (line.rstrip().split(sep)[col] for line in file_in.readlines())
 
-    with open(filename, "r") as fileIn:
-        return [line.rstrip().split("\t")[col] for line in fileIn.readlines()]
 
-
-def loadInListWithHeader(filename):
+def load_in_dict(filename, sep="\t"):
     """
-    Load file in two list(): return header list and rows list
+    Check file exist and return a :class:`dict` with load rows first column is the key and value are other column.
+    File can be a gzip file with '.gz' extension.
 
-    :param filename: a file
-    :type filename: file
-    :rtype: list(), list()
-    :return: - header liste\n
-             - list of list of row's file
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
+    Arguments:
+        filename (str): a path to existent file
+        sep (str, default): the string separator. Default="\t"
+
+    Returns:
+        :class:`dict`: a python :class:`dict` of file
+
+    Raises:
+         FileNotFoundError: If file `filename` does not exist or not valid file
 
     Example:
-        >>> header, rows = loadInListWithHeader(filename)
-        >>> header
-        "['head1','head2','head3']
-        >>> rows
-        [["line1col1","line1col2","line1col3"],["line2col1","line2col2","line2col3"]]
-    """
-
-    with open(filename, "r") as fileIn:
-        list = fileIn.readlines()
-    header = list[0].rstrip().split("\t")
-    listgood = [line.rstrip() for line in list[1:]]
-    return header, listgood
-
-
-def loadInDict(filename):
-    """
-    Load file in Dict() and then remove \\n at end of line, then add first column in key of dict and valueare other column.
-
-    :param filename: a file
-    :type filename: file
-    :rtype: dict()
-    :return: - dict of row's file without \\n with key is first column and value list of other column
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
-
-    Example:
-        >>> dico = loadInDict(filename)
+        >>> dico = load_in_dict(filename)
         >>> dico
         {
         "col1",["col2","col3"],
@@ -302,198 +316,133 @@ def loadInDict(filename):
         "indiv2",["valeurcol2","valeurcol3"]
         }
     """
+    from pathlib import Path
+    import gzip
+    filename = Path(filename)
+    if not filename.exists() or not filename.is_file():
+        raise FileNotFoundError(
+            f'ERROR: Yoda_powers.toolbox.load_in_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+    ext = filename.suffix
+    dico_out = {}
+    if ext != ".gz":
+        open_fn = open
+    else:
+        open_fn = gzip.open
+    with open_fn(filename, "rt") as file_in:
+        for line in file_in:
+            tab_line = line.rstrip().split(sep)
+            if tab_line[0] not in dico_out.keys():
+                if len(tab_line[1:]) == 0:
+                    dico_out[tab_line[0]] = None
+                elif len(tab_line[1:]) == 1:
+                    dico_out[tab_line[0]] = tab_line[1]
+                else:
+                    dico_out[tab_line[0]] = tab_line[1:]
+    return dico_out
 
-    dicoOut = {}
-    with open(filename) as filein:
-        for line in filein:
-            tabLine = line.rstrip().split("\t")
-            # print(tabLine[0], tabLine[1])
-            if tabLine[0] not in dicoOut.keys():
-                dicoOut[tabLine[0]] = [] + tabLine[1:]
-    # else:
-    # dicoOut[tabLine[0]].append(tabLine[1])
-    return dicoOut
 
-
-def loadInDictList(filename):
+def load_in_dict_selected(filename, column_key=0, column_value=1, sep="\t"):
     """
-    Load file in Dict() and remove \\n at end of line, then add first column in key of dict and value are list of column 2.
+    Check file exist and return a :class:`dict` with load rows first column is the key and value are other column.
+    File can be a gzip file with '.gz' extension.
 
-    :param filename: a file
-    :type filename: file
-    :rtype: dict()
-    :return: - dict of row's file without \\n with key is first column and value list of other column
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
+    Arguments:
+        filename (str): a path to existent file
+        column_key (int, default): the index for dict keys (python index). Default=0
+        column_value (int, default): the index for dict value (python index). Default=1
+        sep (str, default): the string separator. Default="\t"
+
+    Returns:
+        :class:`dict`: a python :class:`dict` of file
+
+    Raises:
+         FileNotFoundError: If file `filename` does not exist or not valid file
+         IndexError: If missing data
 
     Example:
-        >>> dico = loadInDictList(filename)
+        >>> dico = load_in_dict(filename)
         >>> dico
         {
-        "scaffold1",["1000","2000"],
-        "scaffold12",["2000","5000"]
+        "col1",["col2","col3"],
+        "indiv1",["valeurcol2","valeurcol3"],
+        "indiv2",["valeurcol2","valeurcol3"]
         }
     """
+    from pathlib import Path
+    import gzip
+    filename = Path(filename)
+    if not filename.exists() or not filename.is_file():
+        raise FileNotFoundError(
+            f'ERROR: Yoda_powers.toolbox.load_in_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+    ext = filename.suffix
+    dico_out = {}
+    if ext != ".gz":
+        open_fn = open
+    else:
+        open_fn = gzip.open
+    try:
+        with open_fn(filename, "rt") as file_in:
+            for num_line, line in enumerate(file_in):
+                tab_line = line.rstrip().split(sep)
+                if tab_line[column_key] not in dico_out.keys():
+                    dico_out[tab_line[column_key]] = tab_line[column_value]
+    except IndexError:
+        raise IndexError(
+                f'ERROR: Yoda_powers.toolbox.load_in_dict_selected() please check line {num_line + 1}, no value for column {column_value + 1}')
 
-    dicoOut = {}
-    with open(filename) as filein:
-        for line in filein:
-            tabLine = line.rstrip().split("\t")
-
-            if tabLine[0] not in dicoOut.keys():
-                dicoOut[tabLine[0]] = [] + tabLine[1:]
-            else:
-                dicoOut[tabLine[0]].append(tabLine[1])
-    return dicoOut
+    return dico_out
 
 
-def loadInDictCol(filename, columnkey, columnvalue):
+def load_in_dict_dict(filename, sep="\t"):
     """
-    Load file in Dict() and then remove \\n at end of line, then add first column in key of dict and valu specify column.
+    Check file exist and return a :class:`dict` with load rows first column is the key and value are other column.
+    File can be a gzip file with '.gz' extension.
 
-    :param filename: a file
-    :type filename: file
-    :param columnkey: int of column
-    :type columnkey: int
-    :param columnvalue: int of column
-    :type columnvalue: int
-    :rtype: dict()
-    :return: - dict of row's file without \\n with key is first column and value column number pass
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
+    Arguments:
+        filename (str): a path to existent file
+        sep (str, default): the string separator. Default="\t"
+
+    Returns:
+        :class:`dict`: a python :class:`dict` of file
+
+    Raises:
+         FileNotFoundError: If file `filename` does not exist or not valid file
+         IndexError: If missing data
 
     Example:
-        >>> dico = loadInDict(filename,columnkey=1,columnvalue=3 )
-        >>> dico
-        {
-        "col1","col3",
-        "indiv1","valeurcol3",
-        "indiv2","valeurcol3"
-        }
-    """
-
-    dicoOut = {}
-    with open(filename) as filein:
-        for line in filein:
-            tabLine = line.rstrip().split("\t")
-            # print(tabLine[0], tabLine[1])
-            if tabLine[columnkey] not in dicoOut.keys():
-                dicoOut[tabLine[columnkey]] = tabLine[columnvalue]
-    return dicoOut
-
-
-def loadInDictLine(filename):
-    """
-    Load file in Dict() and then remove \\n at end of line, then add first column in key of dict and valueare other column.
-
-    :param filename: a file
-    :type filename: file
-    :rtype: dict()
-    :return: - dict of row's file without \\n with key is first column and value list of other column
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
-
-    Example:
-        >>> dico = loadInDictLine(filename)
-        >>> dico
-        {
-        "col1",[line1],
-        "indiv1",[line2],
-        "indiv2",[line3]
-        }
-    """
-
-    dicoOut = {}
-    with open(filename) as filein:
-        for line in filein:
-            tabLine = line.rstrip().split("\t")
-            # print(tabLine[0], tabLine[1])
-            if tabLine[0] not in dicoOut.keys():
-                dicoOut[tabLine[0]] = line
-    return dicoOut
-
-
-def loadInDictDict(filename):
-    """
-    Load a file with header in dictDict().
-
-    :param filename: a file
-    :type filename: file
-    :rtype: dict()
-    :return: - dict of dict
-    :warn: Use this function with small file !!! except more RAM are use and crash systeme.
-
-    Example:
-        >>> dico = loadInDictDict(filename)
+        >>> dico = load_in_dict_dict(filename)
         >>> dico
         {
         "indiv1",{"headerCol2":"toto","headerCol3":"tata"},
         "indiv2",{"headerCol2":"tutu","headerCol3":"titi"},
-        "indiv3",{"headerCol2":"tete","headerCol3":"tata"},
+        "indiv3",{"headerCol2":"tete","headerCol3":"tyty"},
         }
     """
-
-    dicoOut = {}
-    with open(filename) as filein:
-        header = filein.readline().rstrip().split("\t")
-        for line in filein:
-            tabLine = line.rstrip().split("\t")
-            if tabLine[0] not in dicoOut.keys():
-                dicoOut[tabLine[0]] = {}
-                i = 1
-                for head in header[1:]:
-                    dicoOut[tabLine[0]][head] = tabLine[i]
-                    i += 1
-            else:
-                print("ERROR key %s already load exit" % tabLine[0])
-    return dicoOut
-
-
-def lsDirToList(pathDirectory):
-    """
-    Return a list of file and directory find in directory
-
-    :param pathDirectory: a directory Path
-    :type pathDirectory: Path
-    :rtype: list()
-    :return: list of filename in pathDirectory
-
-    Example:
-        >>> lsDirectory = lsDirToList(path/to/directory/)
-        >>> print(lsDirectory)
-        ["./out/gemo10_4497_ortho_rename_add.fasta", "./out/gemo10_6825_ortho_rename_add.fasta", "./out/gemo10_3497_ortho_rename_add.fasta", "./out/rename/"]
-    """
-
-
-def lsFastaInDirToList(pathDirectory):
-    """
-    Return a list of fasta file's find in directory ("fasta", "fa", "fas")
-
-    :param pathDirectory: a directory Path
-    :type pathDirectory: Path
-    :rtype: list()
-    :return: list of fasta filename in pathDirectory ( file with extention "fa", "fasta", "fas" )
-
-    Example:
-        >>> lsDirectory = lsFastaInDirToList(path/to/directory/)
-        >>> print(lsDirectory)
-        ["./out/gemo10_4497_ortho_rename_add.fasta", "./out/gemo10_6825_ortho_rename_add.fasta", "./out/gemo10_3497_ortho_rename_add.fasta"]
-    """
-
-
-def lsExtInDirToList(pathDirectory, extentionFichierKeep):
-    """
-    Return a list of 'ext' file's find in directory (exemple ext = "txt" or ["txt","py"])
-
-    :param pathDirectory: a directory Path
-    :type pathDirectory: Path
-    :param extentionFichierKeep: a list or string with extention
-    :type extentionFichierKeep: list or string
-    :rtype: list()
-    :return: list of 'ext' filename in pathDirectory ( file with extention find in param extentionFichierKeep )
-
-    Example:
-        >>> lsDirectory = lsExtInDirToList(path/to/directory/,"txt")
-        >>> print(lsDirectory)
-        ["./out/gemo10_4497_ortho_rename_add.txt", "./out/gemo10_6825_ortho_rename_add.txt", "./out/gemo10_3497_ortho_rename_add.txt"]
-    """
+    from pathlib import Path
+    import gzip
+    from collections import defaultdict, OrderedDict
+    filename = Path(filename)
+    if not filename.exists() or not filename.is_file():
+        raise FileNotFoundError(
+            f'ERROR: Yoda_powers.toolbox.load_in_dict_dict() file "{filename}" {"does not exist" if not filename.exists() else "is not a valid file"}')
+    ext = filename.suffix
+    dico_out = defaultdict(OrderedDict)
+    if ext != ".gz":
+        open_fn = open
+    else:
+        open_fn = gzip.open
+    try:
+        with open_fn(filename, "rt") as file_in:
+            header = file_in.readline().rstrip().split(sep)
+            for num_line, line in enumerate(file_in):
+                tab_line = line.rstrip().split(sep)
+                if tab_line[0] not in dico_out.keys():
+                    for index, head in enumerate(header[1:]):
+                        dico_out[tab_line[0]][head] = tab_line[index + 1]
+    except IndexError:
+        raise IndexError(
+                f'ERROR: Yoda_powers.toolbox.load_in_dict_dict() please check line {num_line + 1}, no value for column {head}')
+    return dico_out
 
 
 def printcolor(txt, color, noprint=1):
@@ -573,17 +522,17 @@ class printCol():
         print(f"{cls.__PURPLE}{s}{cls.__END}")
 
 
-class AutoVivification(dict):
+class Auto_vivification(dict):
     """
     Implementation of perl's autovivification feature.
 
     Example:
 
-    >>> a = AutoVivification()
+    >>> a = Auto_vivification()
     >>> a[1][2][3] = 4
     >>> a[1][3][3] = 5
     >>> a[1][2]['test'] = 6
-    >>> print a
+    >>> print(a)
     >>> {1: {2: {'test': 6, 3: 4}, 3: {3: 5}}}
 
     """
@@ -595,8 +544,6 @@ class AutoVivification(dict):
             value = self[item] = type(self)()
             return value
 
-
-# *********************************************** Classe directory *******************
 
 class Directory(PosixPath):
     """
@@ -619,10 +566,9 @@ class Directory(PosixPath):
         """
         from pathlib import Path
 
-        if not Path(path_directory).exists():
-            raise ValueError(f'ERROR: Yoda_powers.toolbox.directory "{path_directory}" does not exist')
-        elif not Path(path_directory).is_dir():
-            raise ValueError(f'ERROR: Yoda_powers.toolbox.directory "{path_directory} " is not a valid directory')
+        if not Path(path_directory).exists() or not Path(path_directory).is_dir():
+            raise NotADirectoryError(
+                f'ERROR: Yoda_powers.toolbox.Directory() directory "{path_directory}" {"does not exist" if not Path(path_directory).exists() else "is not a valid directory"}')
 
         self.path_directory = Path(path_directory).resolve()
         self.__sep = "\n"
