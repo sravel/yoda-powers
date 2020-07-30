@@ -49,7 +49,6 @@ def main():
             keywords=[
                     'python',
             ],
-            package_dir=["yoda_powers","yoda_powers"],
             packages=find_packages(),
             package_data={
                     'yoda_powers': ['*.ini'],
