@@ -28,8 +28,8 @@ sys.path.insert(0, os.path.abspath('../../yoda_powers/scripts/'))
 PATH = os.path.abspath('../../yoda_powers/scripts/')
 
 if os.environ.get('READTHEDOCS') == 'True':
-    PATH = os.path.abspath('./../yoda_powers/scripts/')
-    sys.path.insert(0, os.path.abspath('./../yoda_powers/scripts/'))
+    PATH = os.path.abspath('./../../yoda_powers/scripts/')
+    sys.path.insert(0, os.path.abspath('./../../yoda_powers/scripts/'))
     sys.path.insert(0, os.path.abspath('./../..'))
 
 # -- General configuration ------------------------------------------------
