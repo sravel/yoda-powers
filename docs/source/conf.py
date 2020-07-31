@@ -359,10 +359,10 @@ def setup(app):
     app.add_css_file('logo.css')  # may also be an URL('logo.css')  # may also be an URL
     # app.add_css_file('sphinx-argparse.css')
 
-    from sphinx.ext import apidoc
-    app.connect('builder-inited', lambda _: apidoc.main([
-        '-o', './docs/source/scripts/', '-t', './docs/source/_templates', '-d1', '-feMT', PATH,
-    ]))
+    # from sphinx.ext import apidoc
+    # app.connect('builder-inited', lambda _: apidoc.main([
+    #     '-o', './docs/source/scripts/', '-t', './docs/source/_templates', '-d1', '-feMT', PATH,
+    # ]))
     # app.connect('builder-inited', lambda _: apidoc.main([
     #     '-o', './docs/source/yoda_powers', '-d3', '-feTMP', './yoda_powers',
     # ]))
