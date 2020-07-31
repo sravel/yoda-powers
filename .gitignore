@@ -128,5 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# other
+# IDE pycharm
 .idea/
+
+# auto-build on readthedocs or local build
+./docs/source/api/
+./docs/source/yoda_powers/
