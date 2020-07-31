@@ -47,7 +47,8 @@ extensions = ['sphinx.ext.intersphinx',
               'autodocsumm',
               'sphinx_automodapi.automodapi',
               'sphinx.ext.napoleon',
-              'sphinxcontrib.autoprogram'
+              # 'sphinxcontrib.autoprogram'
+              'btd.sphinx.autoprogram'
               ]
 
 autodoc_default_options = {
