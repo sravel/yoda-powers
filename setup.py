@@ -12,12 +12,11 @@ import yoda_powers
 
 # auto build console_scripts entry
 from yoda_powers import scripts
+
 console_scripts_list = []
 for script in scripts.list_scripts:
     if "__init__" not in script.name:
-        script_name = script.name
-        script_basename = script.stem
-        txt = f"{script_name} = yoda_powers.scripts.{script_basename}:main"
+        txt = f"{script.name} = yoda_powers.scripts.{script.stem}:main"
         console_scripts_list.append(txt)
 
 
@@ -28,8 +27,8 @@ def main():
             name=yoda_powers.__name__,
             version=yoda_powers.__version__,
             description=yoda_powers.__doc__,
-            long_description=HERE.joinpath('README.rst').open(encoding='utf-8').read(),
             long_description_content_type='text/x-rst',
+            long_description=HERE.joinpath('README.rst').open(encoding='utf-8').read(),
             # these are optional and override conf.py settings
             command_options={
                     'build_sphinx': {
@@ -53,7 +52,6 @@ def main():
             author="Sébastien Ravel",
             url="https://github.com/sravel/yoda-powers",
             download_url="https://github.com/sravel/yoda-powers/archive/{}.tar.gz".format(yoda_powers.__version__),
-            license='LGPL license',
             platforms=['cross-platform', 'Windows i686', 'MacOSX AMD64'],
             keywords=[
                     'python',
@@ -73,8 +71,8 @@ def main():
             # scripts=['./yoda_powers/scripts/'],
             zip_safe=False,  # Don't install the lib as an .egg zipfile
             entry_points={
-                    yoda_powers.__name__    : [yoda_powers.__name__+" = __init__"],
-                    'console_scripts': console_scripts_list
+                    yoda_powers.__name__: [yoda_powers.__name__ + " = __init__"],
+                    'console_scripts'   : console_scripts_list
             },
     )
 

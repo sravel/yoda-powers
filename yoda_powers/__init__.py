@@ -28,7 +28,7 @@ Install
 Required Module install
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Modules ``BioPython`` will be install with :class:`yoda_powers`:**
+Modules ``BioPython`` will be install with :class:``yoda_powers``:
 
 Global install
 ^^^^^^^^^^^^^^
