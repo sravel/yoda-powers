@@ -26,6 +26,7 @@ def main():
     setup(
             name=yoda_powers.__name__,
             version=yoda_powers.__version__,
+            description="Use it to import very handy functions.",
             long_description_content_type='text/x-rst',
             long_description=HERE.joinpath('README.rst').open(encoding='utf-8').read(),
             # these are optional and override conf.py settings
@@ -58,7 +59,7 @@ def main():
             ],
             packages=find_packages(),
             package_data={
-                    'yoda_powers': [HERE.joinpath("docs").as_posix()],
+                    'yoda_powers': ['*.ini'],
             },
             include_package_data=True,
             install_requires=[

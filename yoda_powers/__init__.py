@@ -35,7 +35,6 @@ Global install
 
 ::
 
-    # not working yet, module in development
     # for all users (require root privilege)
     sudo pip3 install yoda_powers
 
