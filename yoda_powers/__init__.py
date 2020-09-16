@@ -33,6 +33,8 @@ Modules ``BioPython`` will be install with :class:``yoda_powers``:
 Global install
 ^^^^^^^^^^^^^^
 
+|PypiPackage|
+
 ::
 
     # for all users (require root privilege)
@@ -89,4 +91,9 @@ more info at https://yoda-powers.readthedocs.io/en/latest/
 .. |PythonVersions| image:: https://img.shields.io/badge/python-3.6+-blue.svg
    :target: https://www.python.org/downloads
    :alt: Python /3.6+
+   
+.. |PypiPackage| image:: https://badge.fury.io/py/yoda-powers.svg
+    :target: https://pypi.org/project/yoda-powers
+    :alt: PyPi package
+
 """

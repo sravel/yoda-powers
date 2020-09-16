@@ -64,6 +64,6 @@ following actions:
     :target: https://www.python.org/downloads
     :alt: Python /3.7+
 
-.. |PypiPackage| image:: https://badge.fury.io/py/Yoda_powers.svg
-    :target: https://pypi.org/project/Yoda_powers
+.. |PypiPackage| image:: https://badge.fury.io/py/yoda-powers.svg
+    :target: https://pypi.org/project/yoda-powers
     :alt: PyPi package
