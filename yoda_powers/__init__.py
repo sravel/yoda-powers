@@ -8,7 +8,7 @@ from . import scripts
 
 ##################################################
 # Variables Globals
-__version__ = "1.0.1"
+__version__ = "1.0.0"
 
 __doc__ = """
 :author: Sebastien Ravel
