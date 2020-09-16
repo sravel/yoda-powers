@@ -9,7 +9,10 @@ Welcome to Yoda powers documentation!
 |PythonVersions| |PypiPackage|
 
 
-.. contents:: Table of Contents
+Table of Contents
+=================
+
+.. contents::
    :depth: 2
 
 
@@ -55,6 +58,7 @@ following actions:
 1. Clone from github ::
 
     git clone https://github.com/sravel/yoda-powers.git
+    
 2. Go in the cloned directory ::
 
     cd yoda_powers
