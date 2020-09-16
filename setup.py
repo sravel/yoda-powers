@@ -26,7 +26,6 @@ def main():
     setup(
             name=yoda_powers.__name__,
             version=yoda_powers.__version__,
-            description=yoda_powers.__doc__,
             long_description_content_type='text/x-rst',
             long_description=HERE.joinpath('README.rst').open(encoding='utf-8').read(),
             # these are optional and override conf.py settings
@@ -50,6 +49,7 @@ def main():
                     'Natural Language :: English',
             ],
             author="Sébastien Ravel",
+            author_email="sebastien.ravel@cirad.fr",
             url="https://github.com/sravel/yoda-powers",
             download_url="https://github.com/sravel/yoda-powers/archive/{}.tar.gz".format(yoda_powers.__version__),
             platforms=['cross-platform', 'Windows i686', 'MacOSX AMD64'],
@@ -58,18 +58,17 @@ def main():
             ],
             packages=find_packages(),
             package_data={
-                    'yoda_powers': ['*.ini'],
+                    'yoda_powers': [HERE.joinpath("docs").as_posix()],
             },
             include_package_data=True,
             install_requires=[
                     'BioPython',
             ],
             options={
-                    'bdist_wheel':
-                        {'universal': True}
+                    'bdist_wheel': {'universal': True}
             },
             # scripts=['./yoda_powers/scripts/'],
-            zip_safe=False,  # Don't install the lib as an .egg zipfile
+            zip_safe=False,
             entry_points={
                     yoda_powers.__name__: [yoda_powers.__name__ + " = __init__"],
                     'console_scripts'   : console_scripts_list

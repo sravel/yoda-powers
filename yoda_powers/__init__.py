@@ -8,7 +8,7 @@ from . import scripts
 
 ##################################################
 # Variables Globals
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 __doc__ = """
 :author: Sebastien Ravel
@@ -23,10 +23,10 @@ Warnings:
 
 
 Install
--------
+=======
 
 Required Module install
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 
 Modules ``BioPython`` will be install with :class:``yoda_powers``:
 
@@ -62,7 +62,7 @@ following actions:
     $ sudo pip3 install -e .
 
 Sub module information
-----------------------
+======================
 
 This module are split on three sub-module
 
@@ -73,7 +73,8 @@ This module are split on three sub-module
 
 
 Example of usage
-----------------
+================
+
 Example:
 
 >>> from yoda_powers.display import dict_2_txt
