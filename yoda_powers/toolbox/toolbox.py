@@ -132,10 +132,10 @@ def sort_human(in_list, _nsre=None):
     Example:
         >>> list_to_sorted = ["something1","something32","something17","something2","something29","something24"]
         >>> print(sorted(list_to_sorted, key=sort_human))
-        ['something1', 'something17', 'something2', 'something25', 'something29', 'something32']
+        ['something1', 'something2', 'something17', 'something24', 'something29', 'something32']
         >>> list_to_sorted.sort(key=sort_human)
         >>> print(list_to_sorted)
-        ['something1', 'something17', 'something2', 'something25', 'something29', 'something32']
+        ['something1', 'something2', 'something17', 'something24', 'something29', 'something32']
 
     """
     from warnings import warn
