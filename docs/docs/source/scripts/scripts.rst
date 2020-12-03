@@ -1,13 +1,13 @@
-scripts
-=======
+scripts package
+===============
 
 .. automodule:: scripts
    :members:
    :undoc-members:
    :show-inheritance:
 
-Table of contents
------------------
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 1
