@@ -46,32 +46,22 @@ extensions = ['sphinx.ext.intersphinx',
               'sphinxcontrib.autoprogram'
               ]
 
-autodoc_default_options = {
-        'autosummary'     : False,
-        'member-order'    : 'bysource',
-        'special-members' : '__init__',
-        'no-undoc-members': True,
-        'exclude-members' : '__weakref__'
-}
-
+autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 2
+autosummary_generate = True
+autosummary_generate_overwrite = True
 # numpydoc settings
 numpydoc_show_class_members = True
 numpydoc_show_inherited_class_members = True
 numpydoc_attributes_as_param_list = False
 numpydoc_class_members_toctree = False
 
-
-autosectionlabel_prefix_document = True
-autosectionlabel_maxdepth = 2
-autosummary_generate = False
-autosummary_generate_overwrite = False
-
 # Napoleon settings
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = False
 napoleon_include_private_with_doc = False
-napoleon_include_special_with_doc = True
+napoleon_include_special_with_doc = False
 napoleon_use_admonition_for_examples = True
 napoleon_use_admonition_for_notes = True
 napoleon_use_admonition_for_references = True
